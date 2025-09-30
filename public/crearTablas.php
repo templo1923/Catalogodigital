@@ -41,16 +41,17 @@ try {
     )";
     crearTablaSiNoExiste($conexion, 'categorias', $consultaCategorias);
 
-       
- // Crear tabla 'subcategorias' si no existe
- $consultaSubCategorias = "CREATE TABLE IF NOT EXISTS `subcategorias` (
-    idSubCategoria INT(11) AUTO_INCREMENT PRIMARY KEY,
-    idCategoria INT(100) NOT NULL,
-    subcategoria VARCHAR(100) NOT NULL
-)";
-crearTablaSiNoExiste($conexion, 'subcategorias', $consultaSubCategorias);
-    
-  
+    // Crear tabla 'contacto' si no existe
+    $consultaContacto = "CREATE TABLE IF NOT EXISTS `contacto` (
+        idContacto INT(11) AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(100),
+        email VARCHAR(100),
+        asunto VARCHAR(255),
+        mensaje TEXT,
+        leido BOOLEAN DEFAULT FALSE,
+        fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )";
+    crearTablaSiNoExiste($conexion, 'contacto', $consultaContacto);
 
     // Crear tabla 'banner' si no existe
     $consultaBanner = "CREATE TABLE IF NOT EXISTS `banner` (
@@ -67,89 +68,29 @@ crearTablaSiNoExiste($conexion, 'subcategorias', $consultaSubCategorias);
         descripcion TEXT NOT NULL,
         titulo VARCHAR(255) NOT NULL,
         precio INT(100) NOT NULL,
-       idCategoria INT(100) NOT NULL,
-       idSubCategoria INT(100),
+        idCategoria INT(100) NOT NULL,
+        idSubCategoria INT(100),
         masVendido VARCHAR(30) NOT NULL,
         imagen1 VARCHAR(900),
         imagen2 VARCHAR(900),
         imagen3 VARCHAR(900),
         imagen4 VARCHAR(900),
         item1 VARCHAR(255),
-         item2 VARCHAR(255),
-         item3 VARCHAR(255),
-         item4 VARCHAR(255),
-         item5 VARCHAR(255),
+        item2 VARCHAR(255),
+        item3 VARCHAR(255),
+        item4 VARCHAR(255),
+        item5 VARCHAR(255),
         item6 VARCHAR(255),
-         item7 VARCHAR(255),
+        item7 VARCHAR(255),
         item8 VARCHAR(255),
         item9 VARCHAR(255),
         item10 VARCHAR(255),
         precioAnterior INT(100) NOT NULL,
         stock INT(255),
-        verItems VARCHAR(30) NOT NULL,
+        verItems VARCHAR(30),
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )";
     crearTablaSiNoExiste($conexion, 'productos', $consultaProductos);
-
-    // Crear tabla 'tienda' si no existe
-    $consultaTiendas = "CREATE TABLE IF NOT EXISTS `tienda` (
-        idTienda INT(11) AUTO_INCREMENT PRIMARY KEY,
-        imagen1 VARCHAR(900),
-        nombre VARCHAR(100) NOT NULL,
-        telefono VARCHAR(20) NOT NULL,
-        email VARCHAR(100),
-        eslogan VARCHAR(100),
-        direccion VARCHAR(255) NOT NULL,
-        instagram VARCHAR(100),
-        facebook VARCHAR(100),
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )";
-    crearTablaSiNoExiste($conexion, 'tienda', $consultaTiendas);
-
-     // Crear tabla 'estado' si no existe
-     $consultaEstado = "CREATE TABLE IF NOT EXISTS `estado` (
-        idEstado INT(11) AUTO_INCREMENT PRIMARY KEY,
-        estado VARCHAR(10)
-    )";
-    crearTablaSiNoExiste($conexion, 'estado', $consultaEstado);
-
-    // Crear tabla 'pedidos' si no existe
-    $consultaPedidos = "CREATE TABLE IF NOT EXISTS `pedidos` (
-    idPedido INT(11) AUTO_INCREMENT PRIMARY KEY,
-    idMesa INT(11) NOT NULL,
-    estado VARCHAR(50) NOT NULL,
-    productos JSON NOT NULL,
-    total DECIMAL(10,2) NOT NULL,
-    nota VARCHAR(255),
-    nombre VARCHAR(50),
-    codigo VARCHAR(50),
-    entrega VARCHAR(100) NOT NULL,
-    telefono VARCHAR(20),
-    pago VARCHAR(50) NOT NULL,
-    pagado VARCHAR(50) NOT NULL,
-    pagoRecibir VARCHAR(10),
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )";
-    crearTablaSiNoExiste($conexion, 'pedidos', $consultaPedidos);
-
-
-    // Crear tabla 'mesas' si no existe
-    $consultaMesas = "CREATE TABLE IF NOT EXISTS `mesas` (
-    idMesa INT(11) AUTO_INCREMENT PRIMARY KEY,
-    mesa VARCHAR(100) NOT NULL,
-    estado VARCHAR(50) NOT NULL
-    )";
-    crearTablaSiNoExiste($conexion, 'mesas', $consultaMesas);
-
-     // Crear tabla 'reservas' si no existe
-     $consultaRservas = "CREATE TABLE IF NOT EXISTS `reservas` (
-        idReserva INT(11) AUTO_INCREMENT PRIMARY KEY,
-        nombre VARCHAR(100) NOT NULL,
-        cantidad VARCHAR(100) NOT NULL,
-        estado VARCHAR(50) NOT NULL,
-        fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )";
-        crearTablaSiNoExiste($conexion, 'reservas', $consultaRservas);
 
     // Crear tabla 'usuarios' si no existe
     $consultaUsuarios = "CREATE TABLE IF NOT EXISTS `usuarios` (
@@ -162,49 +103,64 @@ crearTablaSiNoExiste($conexion, 'subcategorias', $consultaSubCategorias);
     )";
     crearTablaSiNoExiste($conexion, 'usuarios', $consultaUsuarios);
 
-    $contrasenaAdmin = password_hash('admin1234', PASSWORD_DEFAULT);
-
-   // Crear tabla 'codigos' si no existe
+    // Crear tabla 'codigos' si no existe
     $consultaCodigos = "CREATE TABLE IF NOT EXISTS `codigos` (
-    idCodigo INT(11) AUTO_INCREMENT PRIMARY KEY,
-    codigo VARCHAR(50) NOT NULL,
-    descuento DECIMAL(5,2) DEFAULT 0,
-    tipo VARCHAR(50) NOT NULL,
-    limite INT(50) DEFAULT 0,
-    idCategoria INT(50)  DEFAULT 0,
-    productos JSON,
-    desde TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    hasta TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        idCodigo INT(11) AUTO_INCREMENT PRIMARY KEY,
+        codigo VARCHAR(50) NOT NULL,
+        descuento DECIMAL(5,2) DEFAULT 0,
+        tipo VARCHAR(50) NOT NULL,
+        limite INT(50) DEFAULT 0,
+        idCategoria INT(50)  DEFAULT 0,
+        productos JSON,
+        desde TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        hasta TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )";
     crearTablaSiNoExiste($conexion, 'codigos', $consultaCodigos);
 
-
-
-    // Crear tabla 'metodos' si no existe
-    $consultaMetodos = "CREATE TABLE IF NOT EXISTS `metodos` (
-        idMetodo INT(11) AUTO_INCREMENT PRIMARY KEY,
-        tipo VARCHAR(255) NOT NULL,
-        estado VARCHAR(20) NOT NULL,
-        datos VARCHAR(255),
+    // Crear tabla 'mesas' si no existe
+    $consultaMesas = "CREATE TABLE IF NOT EXISTS `mesas` (
+        idMesa INT(11) AUTO_INCREMENT PRIMARY KEY,
+        mesa VARCHAR(100) NOT NULL,
+        estado VARCHAR(50) NOT NULL
+    )";
+    crearTablaSiNoExiste($conexion, 'mesas', $consultaMesas);
+    
+    // Crear tabla 'pedidos' si no existe
+    $consultaPedidos = "CREATE TABLE IF NOT EXISTS `pedidos` (
+        idPedido INT(11) AUTO_INCREMENT PRIMARY KEY,
+        idMesa INT(11) NOT NULL,
+        estado VARCHAR(50) NOT NULL,
+        productos JSON NOT NULL,
+        total DECIMAL(10,2) NOT NULL,
+        nota VARCHAR(255),
+        nombre VARCHAR(50),
+        codigo VARCHAR(50),
+        entrega VARCHAR(100) NOT NULL,
+        telefono VARCHAR(20),
+        pago VARCHAR(50) NOT NULL,
+        pagado VARCHAR(50) NOT NULL,
+        pagoRecibir VARCHAR(10),
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )";
-    crearTablaSiNoExiste($conexion, 'metodos', $consultaMetodos);
+    crearTablaSiNoExiste($conexion, 'pedidos', $consultaPedidos);
 
-// Insertar ESTADO
-$sqlInsertEstado = "INSERT INTO `estado` (estado) 
-                  VALUES ('Abierto')";
-$stmtEstado = $conexion->prepare($sqlInsertEstado);
-$stmtEstado->execute();
+    // Verificar si el usuario admin ya existe
+    $sqlCheckAdmin = "SELECT idUsuario FROM `usuarios` WHERE email = 'admin@gmail.com'";
+    $stmtCheckAdmin = $conexion->prepare($sqlCheckAdmin);
+    $stmtCheckAdmin->execute();
 
-
-// Insertar nuevo usuario admin
-$sqlInsertAdmin = "INSERT INTO `usuarios` (nombre, email, contrasena, rol, createdAt) 
-                  VALUES ('admin', 'admin@gmail.com', :contrasenaAdmin, 'admin', NOW())";
-$stmtAdmin = $conexion->prepare($sqlInsertAdmin);
-$stmtAdmin->bindParam(':contrasenaAdmin', $contrasenaAdmin);
-$stmtAdmin->execute();
-
-echo "Usuario admin creado correctamente.";
+    if ($stmtCheckAdmin->rowCount() == 0) {
+        // Insertar nuevo usuario admin si no existe
+        $contrasenaAdmin = password_hash('admin1234', PASSWORD_DEFAULT);
+        $sqlInsertAdmin = "INSERT INTO `usuarios` (nombre, email, contrasena, rol, createdAt) 
+                        VALUES ('admin', 'admin@gmail.com', :contrasenaAdmin, 'admin', NOW())";
+        $stmtAdmin = $conexion->prepare($sqlInsertAdmin);
+        $stmtAdmin->bindParam(':contrasenaAdmin', $contrasenaAdmin);
+        $stmtAdmin->execute();
+        echo "Usuario admin creado correctamente.<br>";
+    } else {
+        echo "El usuario admin ya existe.<br>";
+    }
     
     echo "Proceso de creación de tablas finalizado.";
 } catch (PDOException $error) {
