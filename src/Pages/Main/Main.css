@@ -36,16 +36,8 @@
     align-items: center;
     gap: 2rem;
 }
-.graficosFlex{
-    display: flex;
-    gap: 2rem;
-}
+
 @media (max-width: 1024px){
-    .graficosFlex{
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
     .containerGrid{
        flex-direction: column;
     }

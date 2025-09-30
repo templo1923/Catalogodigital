@@ -8,7 +8,6 @@ import { Link as Anchor } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import QrGenerator from '../QrGenerator/QrGenerator';
-import Estado from '../Estado/Estado';
 export default function HeaderDash() {
 
 
@@ -18,10 +17,9 @@ export default function HeaderDash() {
 
             <div className='deFlexHeader'>
                 <ButonScreen />
-                <Estado />
                 <ButonInstallAppNav />
                 <Anchor to={'/'} className='link'>
-                    <FontAwesomeIcon icon={faHome} /> Tienda
+                    <FontAwesomeIcon icon={faHome} /> Inicio
                 </Anchor>
                 <QrGenerator />
                 <InfoUser />
