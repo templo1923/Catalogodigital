@@ -8,7 +8,7 @@ export default function MercadoPago() {
 
     // Función para cargar el script de Mercado Pago dinámicamente solo si no está cargado
     const loadMercadoPagoScript = () => {
-        if (!document.querySelector('script[src="https://sdk.mercadopago.com/|s/v2"]')) {
+        if (!document.querySelector('script[src="https://sdk.mercadopago.com/js/v2"]')) {
             const script = document.createElement("script");
             script.src = "https://sdk.mercadopago.com/js/v2";
             script.async = true;

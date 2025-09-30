@@ -6,8 +6,7 @@ export default function Developer() {
 
     return (
         <p className='Developer'>
-            © Copyright 2025 Contacto 573004085041
-            Catalogosco.pro
+            © Copyright 2024
         </p>
     );
 }

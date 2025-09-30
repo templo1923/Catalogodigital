@@ -123,7 +123,7 @@ export default function Products() {
                             value="Todo"
                             onClick={() => handleClickCategoria('Todo')}
                             style={{
-                                backgroundColor: categoriaSeleccionada === 'Todo' ? '#023992' : '',
+                                backgroundColor: categoriaSeleccionada === 'Todo' ? '#F80050' : '',
                                 color: categoriaSeleccionada === 'Todo' ? '#fff' : '',
                             }}
                         />
@@ -134,7 +134,7 @@ export default function Products() {
                                     value={categoria}
                                     onClick={() => handleClickCategoria(idCategoria)}
                                     style={{
-                                        backgroundColor: categoriaSeleccionada === idCategoria ? '#023992' : '',
+                                        backgroundColor: categoriaSeleccionada === idCategoria ? '#F80050' : '',
                                         color: categoriaSeleccionada === idCategoria ? '#fff' : '',
                                     }}
                                 />
@@ -152,7 +152,7 @@ export default function Products() {
                                     value="Todo"
                                     onClick={() => handleClickSubcategoria('Todo')}
                                     style={{
-                                        borderBottom: subcategoriaSeleccionada === 'Todo' ? '2px solid #000000' : '',
+                                        borderBottom: subcategoriaSeleccionada === 'Todo' ? '2px solid #F80050' : '',
                                         color: subcategoriaSeleccionada === 'Todo' ? '#F80050' : '',
                                     }}
                                     id='subcategoriaInput'
@@ -170,7 +170,7 @@ export default function Products() {
                                                 value={subcategoria.subcategoria}
                                                 onClick={() => handleClickSubcategoria(subcategoria.idSubCategoria)}
                                                 style={{
-                                                    borderBottom: subcategoriaSeleccionada === subcategoria.idSubCategoria ? '2px solid #000000' : '',
+                                                    borderBottom: subcategoriaSeleccionada === subcategoria.idSubCategoria ? '2px solid #F80050' : '',
                                                     color: subcategoriaSeleccionada === subcategoria.idSubCategoria ? '#F80050' : '',
                                                 }}
                                                 id='subcategoriaInput'
