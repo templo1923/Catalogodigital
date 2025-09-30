@@ -16,15 +16,13 @@
   --color3:rgba(31, 135, 233, 0.455);
   --blanco: #fff;
   --input:#c1bfbf;
-  --loading:#21091160;
+  --loading:#f8004f60;
 }
 
 
-h2,h3,h4,h5,h6{
+h2,h3,h4,h5{
   color: var(--text-color);
 }
-
-
 a{
   text-decoration: none;
 }
@@ -32,7 +30,7 @@ a{
  body{
   background-color: var(--gris);
  }
- a,#btnSubmenu,.CategoriConten,.card, .detail-contain img, p,.modalNav,#SwiperSlide-scroll-products,  .categoriasInputs input,.cardProdcutSelected, .cardProdcutmasVendido,.cartIconFixed,.inputsGrap{
+ a, .detail-contain img, p,.modalNav,#SwiperSlide-scroll-products,  .categoriasInputs input,.cardProdcutSelected, .cardProdcutmasVendido,.cartIconFixed{
   opacity: 0;
   animation: slideFromLeft 1s ease-in-out forwards;
   -webkit-animation: slideFromLeft 1s ease-in-out forwards;
