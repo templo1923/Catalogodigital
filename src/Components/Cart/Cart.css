@@ -19,23 +19,12 @@
     flex-direction: column;
     padding: 20px;
     gap: 1rem;
-    overflow-y: scroll;
-
-    max-height: 90vh;
-
-}
-.modal-cart .btn{
-    margin:  1rem 2rem 2rem;
-    width: auto;
-
 }
 .modal-send-form textarea {
     background-color: var(--gris2);
     border-radius: 6px;
     padding: 13px;
     border: none;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
-
 }
 .modal-send-form input {
     background-color: var(--gris2);
@@ -43,14 +32,11 @@
     padding: 13px;
     border: none;
 }
-
 .modal-send-form select {
     background-color: var(--gris2);
     border-radius: 6px;
     padding: 13px;
-    width: 100%;
     border: none;
-    color: var(--text-color2);
 }
 .overlay-cart {
     position: fixed;
@@ -68,7 +54,7 @@
 .modal-content-cart {
     width: 100%;
     overflow-y: scroll;
-    min-height:  70%;
+    height: 72vh;
     padding: 10px;
    
     
@@ -125,7 +111,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    gap: 4px;
+    gap: 7px;
     width: 50%;
 }
 
@@ -135,17 +121,16 @@
     text-overflow: ellipsis;
     max-width: 20ch;
     font-weight: 500;
-    font-size: 1em;
+    font-size: 16px;
     color: var(--text-color2);
 }
 .cardProductCartText span{
     color: var(--text-color2);
-    font-size: 0.9em;
-    opacity: .9;
+    font-size: 14px;
 }
 .cardProductCartText strong{
     color: var(--text-color2);
-    font-size: 0.8em;
+    font-size: 15px;
     font-weight: 500;
 }
 .deFLex{
@@ -158,7 +143,7 @@
 }
 .deFLex h4{
     color: var(--blanco);
-    font-size: 0.9em;
+    font-size: 17px;
     font-weight: 400;
 }
 .deFLex button{
@@ -166,7 +151,7 @@
     border: none;
     color: var(--blanco);
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 17px;
     
 }
 .deFLexBtns{
@@ -175,9 +160,12 @@
    justify-content: space-between;
    gap: 2rem;
 }
+.deFLexBtns .btn{
+    font-size: 14px;
+}
 .btnWpp{
     background-color: rgb(30, 184, 30);
-    padding: 11px;
+    padding: 9px;
     color: var(--blanco);
     border-radius: 60px;
     border: none;
@@ -200,10 +188,6 @@
     background-color: var(--blanco);
     margin: 0px 20px;
 }
-.deColumnCart .btn{
-    margin: 0!important;
-}
-
 .btnWpp img{
     width: 25px;
 }
@@ -211,10 +195,9 @@
     padding-bottom: 10px;
     color: var(--text-color2);
     border-bottom: 1px solid var(--text-color2);
-    font-size: 0.9em;
 }
 .cartIcon{
-    color: var(--blanco);
+    color: var(--color1);
     border: none;
     background-color: transparent;
     font-size: 20px;
@@ -238,7 +221,7 @@
 
 .cartIconFixed{
     position: fixed;
-    bottom: 60px;
+    bottom: 50px;
     right: 0;
     left: 92%;
     background-color: var(--color1);
@@ -269,6 +252,7 @@
 .deFLexRadio{
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 10px;
     color: var(--text-color2);
     background-color: var(--gris2);
@@ -276,39 +260,6 @@
     padding: 13px;
     border: none;
     font-size: 14px;
-}
-.deFLexRadioMetod{
-    display: flex;
-    flex-direction: column;
-    color: var(--text-color2);
-    background-color: var(--gris2);
-    border-radius: 6px;
-    border: none;
-}
-.deFLexRadioMetod span{
-    padding: 13px;
-    font-size: 14px;
-    white-space: pre-line;
-    
-}
-.marg{
-   background-color: aqua;
-   padding: 10px;
-   margin-top: -3rem;
-}
-.radioRecibi{
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    gap: 10px;
-    background-color: #eae5e5;
-    margin: 10px;
-}
-.columnRadio{
-    display: flex;
-    flex-direction: column;
-    justify-content: left;
-    align-items: left;
 }
 .deFLexRadio div{
     display: flex;
@@ -316,20 +267,9 @@
     align-items: center;
 }
 
-.deFLexRadio span{
-    white-space: pre-line;
-    font-size: 0.8em;
-    border-bottom: 2px solid var(--gris2);
-}
-
-.deFLexRadio span hr{
-   margin: 10px 0;
-   height: 2px;
-}
-
 .deFlexCantidad{
     display: flex;
-    gap: 10px;
+    gap: 1rem;
     align-items: center;
     justify-content: space-between;
 }
@@ -342,44 +282,12 @@
     padding: 3px 6px;
 }
 .deFlexCantidad span{
-    font-weight: 500;
+    font-weight: 600;
 }
 .deNonefieldset{
     display: none;
 }
-.cerrada{
-    display: flex;
-    text-align: center;
-    width: 100%;
-    justify-content: center;
-    margin-top: 10rem;
-}
 
-.mesasGrapCart span{
-    font-size: 13px;
-}
-.mesasGrapCart{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    /* max-height: 40vh; */
-    /* overflow-y: scroll; */
-}
-.mesasGrapCart::-webkit-scrollbar{
-    width: 5px;
-    height: 5px;
- 
-    cursor: pointer;
-    background-color: transparent;
-   
-}
- 
-.mesasGrapCart::-webkit-scrollbar-thumb {
-    background-color: var(--color1); 
-    border-radius: 10px;
-    margin-top: 3rem;
-  }
-  
 .mesaCard{
     border-radius: 10px;
     padding: 10px;
@@ -395,13 +303,37 @@
     font-size: 14px;
 }
 .mesaCard input{
+    /* display: none; */
     color: var(--color1);
     background-color: aqua;
     width: 100%;
     margin-top: 4px;
 }
+.mesasGrapCart span{
+    font-size: 13px;
+}
+.mesasGrapCart{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-height: 40vh;
+    overflow-y: scroll;
+}
+.mesasGrapCart::-webkit-scrollbar{
+    width: 5px;
+    height: 5px;
+ 
+    cursor: pointer;
+    background-color: transparent;
+   
+}
+ 
+.mesasGrapCart::-webkit-scrollbar-thumb {
+    background-color: var(--color1); 
+    border-radius: 10px;
+    margin-top: 3rem;
+  }
 @media (max-width: 900px) {
-    
     .modal-cart {
         width: 100%;
         height: 100vh;
@@ -416,9 +348,16 @@
   }
   .cartIconFixed{
     position: fixed;
-    bottom: 30px;
+  bottom: 30px;
     right: 0;
     left: 80%;
    
+}
+.mesasGrapCart{
+    max-height: 45vh;
+}
+.deColumnCart h4{
+    padding-bottom: 10px;
+   font-size: 15px;
 }
 }
