@@ -2,9 +2,9 @@
 const getBaseURL = () => {
     const currentHost = window.location.hostname; // Obtiene el host actual
     if (currentHost.startsWith('www.')) {
-        return 'https://www.sistema-mesas.encatalogo.com';
+        return 'https://restaurante.catalogosco.top/';
     } else {
-        return 'https://sistema-mesas.encatalogo.com';
+        return 'https://restaurante.catalogosco.top/';
     }
 };
 
