@@ -607,7 +607,7 @@ export default function Cart() {
                                     {mesas.map(item => (
                                         <div
                                             key={item.idMesa}
-                                            className={`mesaCard ${item.estado === 'libre' ? (selectedMesa === item.idMesa ? 'selectedMesa' : 'bg-green') : 'bg-red'}`}
+                                            className={`mesaCard ${item.estado === 'libre' ? (idMesa === item.idMesa ?  'selectedMesa' : 'bg-green') : 'bg-red'}`}
                                             onClick={() => { if (item.estado === 'libre') setIdMesa(item.idMesa) }}
                                         >
                                             <label>
