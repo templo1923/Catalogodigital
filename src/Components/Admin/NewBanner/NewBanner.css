@@ -5,12 +5,7 @@
     gap: 10px;
   
 }
-#crearForm input{
-    padding: 5px 10px;
-    border: none;
-    width: 100%;
-}
-#crearForm  select{
+#crearForm input, select{
     padding: 5px 10px;
     border: none;
     width: 100%;
@@ -66,46 +61,10 @@
     
    
   }
-
-  .image-banner-label{
-    width: 100%;
-    height: 270px;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    background-color: var(--gris); 
-}
-.image-banner{
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    object-fit: contain;
-    overflow: hidden;
-    cursor: pointer;
-    background-color: var(--gris); 
-    padding: 30px;
-}
-.image-banner-prev{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    
-}
-.legenda{
-    display: flex;
-    text-align: center;
-}
 @media (max-width: 824px){
     #crearForm{
         flex-direction: column;
         flex-wrap: nowrap;
         
-    }
-    .image-banner-label{
-        width: 100%;
-        height: 160px;
-    }
-    .legenda{
-    font-size: 14px;
     }
 }

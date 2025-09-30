@@ -9,12 +9,13 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Register from '../Register/Register';
-import { fetchUsuario, getUsuario } from '../../user';
 export default function UsuariosData() {
     const [usuarios, setUsuarios] = useState([]);
     const [filtroIdUsuario, setFiltroIdUsuario] = useState('');
     const [filtroNombre, setFiltroNombre] = useState('');
     const [filtroRol, setFiltroRol] = useState('');
+    const [filtroFechaDesde, setFiltroFechaDesde] = useState('');
+    const [filtroFechaHasta, setFiltroFechaHasta] = useState('');
     const [filtroEmail, setFiltroEmail] = useState('');
     const [ordenInvertido, setOrdenInvertido] = useState(false);
 
@@ -33,7 +34,7 @@ export default function UsuariosData() {
             .catch(error => console.error('Error al cargar usuarios:', error));
     };
 
-    const eliminar = (idUsuario) => {
+    const eliminarUsuario = (idUsuario) => {
         Swal.fire({
             title: '¿Estás seguro?',
             text: '¡No podrás revertir esto!',
@@ -65,13 +66,12 @@ export default function UsuariosData() {
         });
     };
 
-    const editar = (idUsuario, rolActual) => {
+    const editarUsuario = (idUsuario, rolActual) => {
         Swal.fire({
             title: 'Editar Rol',
             input: 'select',
             inputOptions: {
-                'mesero-chef': 'Mesero-Chef',
-                'colaborador': 'Colaborador',
+                'usuario': 'Usuario',
                 'admin': 'Admin'
             },
             inputValue: rolActual,
@@ -109,9 +109,11 @@ export default function UsuariosData() {
         const idUsuarioMatch = usuario.idUsuario.toString().includes(filtroIdUsuario);
         const nombreMatch = usuario.nombre.toLowerCase().includes(filtroNombre.toLowerCase());
         const rolMatch = !filtroRol || usuario.rol.includes(filtroRol);
+        const fechaDesdeMatch = !filtroFechaDesde || new Date(usuario.createdAt) >= new Date(filtroFechaDesde);
+        const fechaHastaMatch = !filtroFechaHasta || new Date(usuario.createdAt) <= new Date(filtroFechaHasta);
         const emailMatch = usuario.email.toLowerCase().includes(filtroEmail.toLowerCase());
 
-        return idUsuarioMatch && nombreMatch && rolMatch && emailMatch;
+        return idUsuarioMatch && nombreMatch && rolMatch && fechaDesdeMatch && fechaHastaMatch && emailMatch;
     });
 
     const descargarExcel = () => {
@@ -164,33 +166,14 @@ export default function UsuariosData() {
         setUsuarios([...usuarios].reverse());
         setOrdenInvertido(!ordenInvertido);
     };
-
-    //Trae usuario logueado-----------------------------
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        const fetchData = async () => {
-            await fetchUsuario();
-            setLoading(false);
-        };
-
-        fetchData();
-    }, []);
-    const usuarioLegued = getUsuario();
-    const alertPermiso = () => {
-        Swal.fire(
-            '¡Error!',
-            '¡No tienes permisos!',
-            'error'
-        );
-    }
     return (
         <div>
             <div className='deFlexContent'>
-
                 <div className='deFlex2'>
                     <Register />
                     <button className='excel' onClick={descargarExcel}><FontAwesomeIcon icon={faArrowDown} /> Excel</button>
                     <button className='pdf' onClick={descargarPDF}><FontAwesomeIcon icon={faArrowDown} /> PDF</button>
+
                 </div>
 
 
@@ -242,43 +225,21 @@ export default function UsuariosData() {
                         </tr>
                     </thead>
                     <tbody>
-                        {usuariosFiltrados?.map(usuario => (
+                        {usuariosFiltrados.map(usuario => (
                             <tr key={usuario.idUsuario}>
                                 <td>{usuario.idUsuario}</td>
                                 <td>{usuario.nombre}</td>
                                 <td>{usuario.email}</td>
                                 <td style={{
-                                    color: usuario?.rol === 'colaborador' ? '#DAA520' : usuario?.rol === 'admin' ? '#008000' : '#FF0000',
+                                    color: usuario?.rol === 'usuario' ? '#DAA520' : usuario?.rol === 'admin' ? '#008000' : '#FF0000',
 
                                 }}>  {`${usuario?.rol}`}</td>
                                 <td>{usuario.createdAt}</td>
                                 <td>
-                                    {loading ? (
-                                        <></>
-                                    ) : usuarioLegued?.idUsuario ? (
-                                        <>
-                                            {usuarioLegued?.rol === 'admin' ? (
-                                                <>
-                                                    <button className='eliminar' onClick={() => eliminar(usuario.idUsuario)}><FontAwesomeIcon icon={faTrash} /></button>
-                                                    <button className='editar' onClick={() => editar(usuario.idUsuario, usuario.rol)}><FontAwesomeIcon icon={faEdit} /></button>
-                                                </>
-                                            ) : usuarioLegued?.rol === 'colaborador' ? (
-                                                <>
-                                                    <button className='eliminar' onClick={alertPermiso}><FontAwesomeIcon icon={faTrash} /></button>
-                                                    <button className='editar' onClick={alertPermiso}><FontAwesomeIcon icon={faEdit} /></button>
-                                                </>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <button className='eliminar' onClick={() => eliminar(usuario.idUsuario)}><FontAwesomeIcon icon={faTrash} /></button>
-                                            <button className='editar' onClick={() => editar(usuario.idUsuario, usuario.rol)}><FontAwesomeIcon icon={faEdit} /></button>
-                                        </>
-                                    )}
 
+                                    <button className='eliminar' onClick={() => eliminarUsuario(usuario.idUsuario)}><FontAwesomeIcon icon={faTrash} /></button>
 
+                                    <button className='editar' onClick={() => editarUsuario(usuario.idUsuario, usuario.rol)}><FontAwesomeIcon icon={faEdit} /></button>
                                 </td>
                             </tr>
                         ))}

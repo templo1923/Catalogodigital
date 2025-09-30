@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import baseURL from '../../url';
 import './Register.css'
-import { fetchUsuario, getUsuario } from '../../user';
-import Swal from 'sweetalert2';
+
 export default function Register() {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
@@ -62,49 +61,13 @@ export default function Register() {
             setMensaje2('')
         }
     };
-    //Trae usuario logueado-----------------------------
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        const fetchData = async () => {
-            await fetchUsuario();
-            setLoading(false);
-        };
 
-        fetchData();
-    }, []);
-    const usuarioLegued = getUsuario();
-    const alertPermiso = () => {
-        Swal.fire(
-            '¡Error!',
-            '¡No tienes permisos!',
-            'error'
-        );
-    }
     return (
         <div >
             <ToastContainer />
-            {loading ? (
-                <></>
-            ) : usuarioLegued?.idUsuario ? (
-                <>
-                    {usuarioLegued?.rol === 'admin' ? (
-                        <button onClick={toggleModal} className='btnSave'>
-                            <span>  +</span>   Agregar
-                        </button>
-                    ) : usuarioLegued?.rol === 'colaborador' ? (
-                        <button onClick={alertPermiso} className='btnSave'>
-                            <span>  +</span>   Agregar
-                        </button>
-                    ) : (
-                        <></>
-                    )}
-                </>
-            ) : (
-                <button onClick={toggleModal} className='btnSave'>
-                    <span>  +</span>   Agregar
-                </button>
-            )}
-
+            <button onClick={toggleModal} className='btnSave'>
+                <span>  +</span>   Agregar
+            </button>
             {modalOpen && (
                 <div className="modal">
                     <div className="modal-content">
@@ -150,8 +113,7 @@ export default function Register() {
                                         required
                                     >
                                         <option value="">Seleccione un rol</option>
-                                        <option value="mesero-chef">Mesero-Chef</option>
-                                        <option value="colaborador">Colaborador</option>
+                                        <option value="usuario">Usuario</option>
                                         <option value="admin">Admin</option>
                                     </select>
                                 </fieldset>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faEdit, faArrowUp, faArrowDown, faSync } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
@@ -8,7 +8,6 @@ import './ContactoData.css'
 import 'jspdf-autotable';
 import baseURL from '../../url';
 import NewContact from '../NewContact/NewContact';
-import { fetchUsuario, getUsuario } from '../../user';
 export default function ContactoData() {
     const [contactos, setContactos] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -39,7 +38,7 @@ export default function ContactoData() {
             .catch(error => console.error('Error al cargar contactos:', error));
     };
 
-    const editar = (idContacto) => {
+    const eliminarContacto = (idContacto) => {
         // Reemplaza el window.confirm con SweetAlert2
         Swal.fire({
             title: '¿Estás seguro?',
@@ -93,10 +92,10 @@ export default function ContactoData() {
         const payload = {
             nombre: nuevoNombre !== '' ? nuevoNombre : contacto.nombre,
             telefono: nuevoTelefono !== '' ? nuevoTelefono : contacto.telefono,
-            instagram: nuevoInstagram !== undefined ? nuevoInstagram : contacto.instagram,
+            instagram: nuevoInstagram !== '' ? nuevoInstagram : contacto.instagram,
             email: nuevoEmail !== '' ? nuevoEmail : contacto.email,
             direccion: nuevaDireccion !== '' ? nuevaDireccion : contacto.direccion,
-            facebook: nuevofacebook !== undefined ? nuevofacebook : contacto.facebook,
+            facebook: nuevofacebook !== '' ? nuevofacebook : contacto.facebook,
         };
 
         fetch(`${baseURL}/contactoPut.php?idContacto=${idContacto}`, {
@@ -135,24 +134,6 @@ export default function ContactoData() {
     const handleSectionChange = (section) => {
         setSelectedSection(section);
     };
-    //Trae usuario logueado-----------------------------
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        const fetchData = async () => {
-            await fetchUsuario();
-            setLoading(false);
-        };
-
-        fetchData();
-    }, []);
-    const usuarioLegued = getUsuario();
-    const alertPermiso = () => {
-        Swal.fire(
-            '¡Error!',
-            '¡No tienes permisos!',
-            'error'
-        );
-    }
     return (
         <div>
 
@@ -185,51 +166,50 @@ export default function ContactoData() {
                         <div className='sectiontext' style={{ display: selectedSection === 'texto' ? 'flex' : 'none' }}>
                             <div className='flexGrap'>
                                 <fieldset>
-                                    <legend>Nombre de negocio (obligatorio)</legend>
+                                    <legend>Nombre</legend>
                                     <input
                                         type="text"
-                                        value={nuevoNombre}
+                                        value={nuevoNombre !== '' ? nuevoNombre : contacto.nombre}
                                         onChange={(e) => setNuevoNombre(e.target.value)}
                                     />
                                 </fieldset>
                                 <fieldset>
-                                    <legend>Telefono  (obligatorio)</legend>
+                                    <legend>Telefono</legend>
                                     <input
                                         type="number"
-                                        value={nuevoTelefono}
+                                        value={nuevoTelefono !== '' ? nuevoTelefono : contacto.telefono}
                                         onChange={(e) => setNuevoTelefono(e.target.value)}
                                     />
                                 </fieldset>
-
-                                <fieldset >
-                                    <legend>Email  (obligatorio)</legend>
-                                    <input
-                                        type="email"
-                                        value={nuevoEmail}
-                                        onChange={(e) => setNuevoEmail(e.target.value)}
-                                    />
-                                </fieldset>
-                                <fieldset >
-                                    <legend>Direccion  (obligatorio)</legend>
-                                    <input
-                                        type="text"
-                                        value={nuevaDireccion}
-                                        onChange={(e) => setNuevaDieccion(e.target.value)}
-                                    />
-                                </fieldset>
                                 <fieldset>
-                                    <legend>Instagram  link (opcional)</legend>
+                                    <legend>Instagram</legend>
                                     <input
                                         type="url"
-                                        value={nuevoInstagram}
+                                        value={nuevoInstagram !== '' ? nuevoInstagram : contacto.instagram}
                                         onChange={(e) => setNuevoInstagram(e.target.value)}
                                     />
                                 </fieldset>
                                 <fieldset >
-                                    <legend>Facebook  link (opcional)</legend>
+                                    <legend>email</legend>
+                                    <input
+                                        type="email"
+                                        value={nuevoEmail !== '' ? nuevoEmail : contacto.email}
+                                        onChange={(e) => setNuevoEmail(e.target.value)}
+                                    />
+                                </fieldset>
+                                <fieldset >
+                                    <legend>Direccion</legend>
                                     <input
                                         type="text"
-                                        value={nuevofacebook}
+                                        value={nuevaDireccion !== '' ? nuevaDireccion : contacto.direccion}
+                                        onChange={(e) => setNuevaDieccion(e.target.value)}
+                                    />
+                                </fieldset>
+                                <fieldset >
+                                    <legend>Facebook</legend>
+                                    <input
+                                        type="text"
+                                        value={nuevofacebook !== '' ? nuevofacebook : contacto.facebook}
                                         onChange={(e) => setNuevofacebook(e.target.value)}
                                     />
                                 </fieldset>
@@ -252,6 +232,7 @@ export default function ContactoData() {
                 <table className='table'>
                     <thead>
                         <tr>
+                            <th>Id Contacto</th>
                             <th>Nombre</th>
                             <th>Telefono</th>
                             <th>Instagram</th>
@@ -264,6 +245,7 @@ export default function ContactoData() {
                     <tbody>
                         {contactos.map(item => (
                             <tr key={item.idContacto}>
+                                <td>{item.idContacto}</td>
                                 <td>{item.nombre}</td>
                                 <td>{item.telefono}</td>
                                 <td>{item.instagram}</td>
@@ -271,43 +253,13 @@ export default function ContactoData() {
                                 <td>{item.email}</td>
                                 <td>{item.direccion}</td>
                                 <td>
-                                    {loading ? (
-                                        <></>
-                                    ) : usuarioLegued?.idUsuario ? (
-                                        <>
-                                            {usuarioLegued?.rol === 'admin' ? (
-                                                <>
-                                                    <button className='eliminar' onClick={() => editar(item.idContacto)}>
-                                                        <FontAwesomeIcon icon={faTrash} />
-                                                    </button>
-                                                    <button className='editar' onClick={() => abrirModal(item)}>
-                                                        <FontAwesomeIcon icon={faEdit} />
-                                                    </button>
-                                                </>
-                                            ) : usuarioLegued?.rol === 'colaborador' ? (
-                                                <>
-                                                    <button className='eliminar' onClick={alertPermiso}>
-                                                        <FontAwesomeIcon icon={faTrash} />
-                                                    </button>
-                                                    <button className='editar' onClick={alertPermiso}>
-                                                        <FontAwesomeIcon icon={faEdit} />
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <button className='eliminar' onClick={() => editar(item.idContacto)}>
-                                                <FontAwesomeIcon icon={faTrash} />
-                                            </button>
-                                            <button className='editar' onClick={() => abrirModal(item)}>
-                                                <FontAwesomeIcon icon={faEdit} />
-                                            </button>
-                                        </>
-                                    )}
 
+                                    <button className='eliminar' onClick={() => eliminarContacto(item.idContacto)}>
+                                        <FontAwesomeIcon icon={faTrash} />
+                                    </button>
+                                    <button className='editar' onClick={() => abrirModal(item)}>
+                                        <FontAwesomeIcon icon={faEdit} />
+                                    </button>
                                 </td>
                             </tr>
                         ))}

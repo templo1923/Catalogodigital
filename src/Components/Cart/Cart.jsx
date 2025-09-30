@@ -535,62 +535,6 @@ export default function Cart() {
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder='Nombre'
                                 />
-
-
-                                <div className='deFLexRadio'>
-                                    <label>Opciones de entrega</label>
-
-                                    <div>
-                                        <input
-                                            type="radio"
-                                            id="delivery"
-                                            name="deliveryOption"
-                                            value="delivery"
-                                            checked={deliveryOption === 'delivery'}
-                                            onChange={() => setDeliveryOption('delivery')}
-                                        />
-                                        <label htmlFor="delivery">Envío a domicilio</label>
-                                    </div>
-                                    <div>
-                                        <input
-                                            type="radio"
-                                            id="pickup"
-                                            name="deliveryOption"
-                                            value="pickup"
-                                            checked={deliveryOption === 'pickup'}
-                                            onChange={() => setDeliveryOption('pickup')}
-                                        />
-                                        <label htmlFor="pickup">Retirar personalmente</label>
-                                    </div>
-                                </div>
-
-                                <div className='deFLexRadio'>
-                                    <label>Formas de pago</label>
-                                    <div >
-                                        <input
-                                            type="radio"
-                                            id="efectivo"
-                                            name="paymentMethod"
-                                            value="efectivo"
-                                            checked={paymentMethod === 'efectivo'}
-                                            onChange={() => setPaymentMethod('efectivo')}
-                                        />
-                                        <label htmlFor="efectivo">Efectivo</label>
-                                    </div>
-                                    <div >
-                                        <input
-                                            type="radio"
-                                            id="transferencia"
-                                            name="paymentMethod"
-                                            value="transferencia"
-                                            checked={paymentMethod === 'transferencia'}
-                                            onChange={() => setPaymentMethod('transferencia')}
-                                        />
-                                        <label htmlFor="transferencia">Transferencia</label>
-                                    </div>
-
-                                </div>
-                                
                                 <input
                                     type="text"
                                     id="codigo"
@@ -607,7 +551,7 @@ export default function Cart() {
                                     {mesas.map(item => (
                                         <div
                                             key={item.idMesa}
-                                            className={`mesaCard ${item.estado === 'libre' ? (idMesa === item.idMesa ?  'selectedMesa' : 'bg-green') : 'bg-red'}`}
+                                            className={`mesaCard ${item.estado === 'libre' ? (selectedMesa === item.idMesa ? 'selectedMesa' : 'bg-green') : 'bg-red'}`}
                                             onClick={() => { if (item.estado === 'libre') setIdMesa(item.idMesa) }}
                                         >
                                             <label>

@@ -21,22 +21,30 @@ try {
     $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $estado = $_POST['estado'];
-        $productos = json_decode($_POST['productos'], true);
-        $total = $_POST['total'];
-        $nombre = $_POST['nombre'];
-        $telefono = $_POST['telefono'];
-        $entrega = $_POST['entrega'];
-        $nota = $_POST['nota'];
-        $codigo = $_POST['codigo'];
-        $pago = $_POST['pago'];
-        $pagado = $_POST['pagado'];
-        $pagoRecibir = $_POST['pagoRecibir'];
-        $createdAt = $_POST['createdAt'];
-        $idMesa = $_POST['idMesa'];
+        // --- INICIO DE LA CORRECCIÓN ---
 
-        if (!empty($estado) && !empty($productos) && !empty($total) && !empty($nombre) && !empty($telefono) && !empty($entrega) && !empty($pagado) && !empty($createdAt) && !empty($pago) && !empty($idMesa)) {
+        // Asignar valores de POST a variables
+        $idMesa = $_POST['idMesa'] ?? null;
+        $estado = $_POST['estado'] ?? 'Pendiente';
+        $productos = json_decode($_POST['productos'] ?? '[]', true);
+        $total = $_POST['total'] ?? 0;
+        $nombre = $_POST['nombre'] ?? '';
+        $nota = $_POST['nota'] ?? '';
+        $codigo = $_POST['codigo'] ?? '';
+        
+        // Asignar valores por defecto a campos opcionales para evitar errores
+        $telefono = $_POST['telefono'] ?? '';
+        $entrega = $_POST['entrega'] ?? 'Mesa'; // Valor por defecto para pedidos de mesa
+        $pago = $_POST['pago'] ?? 'Pendiente';
+        $pagado = $_POST['pagado'] ?? 'No';
+        $pagoRecibir = $_POST['pagoRecibir'] ?? 0;
+        $createdAt = $_POST['createdAt'] ?? date('Y-m-d H:i:s'); // Usar la fecha actual del servidor
+
+        // Nueva validación más flexible para pedidos a la mesa
+        if (!empty($idMesa) && !empty($nombre) && !empty($productos) && isset($_POST['total'])) {
             
+            // --- FIN DE LA CORRECCIÓN ---
+
             if (!empty($codigo)) {
                 $sqlCodigo = "SELECT tipo, descuento, desde, hasta, limite, idCategoria, productos FROM codigos WHERE codigo = :codigo";
                 $stmtCodigo = $conexion->prepare($sqlCodigo);
@@ -59,7 +67,6 @@ try {
                         if ($limite == 0 || $cantidadUsos < $limite) {
                             $productosCodigo = json_decode($codigoData['productos'], true);
                             $idCategoriaCodigo = $codigoData['idCategoria'];
-
                             $aplicable = false;
 
                             foreach ($productos as $producto) {
@@ -71,7 +78,6 @@ try {
                                         }
                                     }
                                 }
-
                                 if (!empty($idCategoriaCodigo) && !empty($producto['idCategoria'])) {
                                     if ($producto['idCategoria'] == $idCategoriaCodigo) {
                                         $aplicable = true;
@@ -83,7 +89,6 @@ try {
                             if ($aplicable) {
                                 $tipo = $codigoData['tipo'];
                                 $descuento = $codigoData['descuento'];
-
                                 if ($tipo == 'porcentaje') {
                                     $total -= ($total * ($descuento / 100));
                                 } elseif ($tipo == 'fijo') {
@@ -127,22 +132,10 @@ try {
 
             echo json_encode([
                 "mensaje" => "$nombre, tu pedido es el N°$lastPedidoId",
-                "idPedido" => $lastPedidoId,
-                "estado" => $estado,
-                "productos" => $productos,
-                "total" => $total,
-                "nombre" => $nombre,
-                "telefono" => $telefono,
-                "entrega" => $entrega,
-                "nota" => $nota,
-                "codigo" => $codigo,
-                "pago" => $pago,
-                "pagado" => $pagado,
-                "pagoRecibir" => $pagoRecibir,
-                "createdAt" => $createdAt
+                "idPedido" => $lastPedidoId
             ]);
         } else {
-            echo json_encode(["error" => "Por favor, complete todos los campos correctamente"]);
+            echo json_encode(["error" => "Faltan datos esenciales. Por favor, complete el nombre y seleccione una mesa."]);
         }
     } else {
         echo json_encode(["error" => "Método no permitido"]);

@@ -10,10 +10,6 @@
     gap: 20px;
     height: 15vh;
 }
-#cardCantidad2{
-   width: 45%;
-   
-}
 .CardsCantidad{
     display: flex;
     flex-wrap: wrap;
@@ -51,7 +47,7 @@
  }
  .cardCantidad h3{
    
-   font-size: 1em;
+    font-size: 17px;
     font-weight: 500;
     color: var(--text-color2);
  }
@@ -73,9 +69,6 @@
   }
   .cardCantidad{
    width: 45%;
-  }
-  #cardCantidad2{
-   width: 46%;
   }
   .icons{
    font-size: 15px;

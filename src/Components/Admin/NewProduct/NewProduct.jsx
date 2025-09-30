@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import './NewProduct.css';
+import './NewProduct.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import baseURL from '../../url';
-import imageIcon from '../../../images/imageIcon.png';
-import { fetchUsuario, getUsuario } from '../../user';
-import Swal from 'sweetalert2';
-import planes from '../../planes';
 export default function NewProduct() {
     const [mensaje, setMensaje] = useState('');
-    const [imagenPreview, setImagenPreview] = useState([null, null, null, null]); // Arreglo para imágenes
-    const [isImageSelected, setIsImageSelected] = useState([false, false, false, false]); // Arreglo para selección de imágenes
+    const [imagenPreview1, setImagenPreview1] = useState(null);
+    const [imagenPreview2, setImagenPreview2] = useState(null);
+    const [imagenPreview3, setImagenPreview3] = useState(null);
+    const [imagenPreview4, setImagenPreview4] = useState(null);
     const [descripcion, setDescripcion] = useState('');
     const [titulo, setTitulo] = useState('');
     const [categoria, setCategoria] = useState('');
     const [masVendido, setMasVendido] = useState('');
     const [precio, setPrecio] = useState('');
+    const [isImage1Selected, setIsImage1Selected] = useState(false);
+    const [isImage2Selected, setIsImage2Selected] = useState(false);
+    const [isImage3Selected, setIsImage3Selected] = useState(false);
+    const [isImage4Selected, setIsImage4Selected] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [categorias, setCategoras] = useState([]);
-    const [precioAnterior, setPrecioAnterior] = useState('');
-    const [stock, setStock] = useState('');
     const [item1, setItem1] = useState('');
     const [item2, setItem2] = useState('');
     const [item3, setItem3] = useState('');
@@ -30,148 +30,51 @@ export default function NewProduct() {
     const [item8, setItem8] = useState('');
     const [item9, setItem9] = useState('');
     const [item10, setItem10] = useState('');
-    const [subcategorias, setSubCategorias] = useState([]);
-    const [subcategoria, setSubCategoria] = useState([]);
-    const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
-    const [categoriasConSubcategorias, setCategoriasConSubcategorias] = useState([]);
-    const [idCategoria, setIdCategoria] = useState('');
-    const [idSubCategoria, setIdSubCategoria] = useState('');
-    const [mostrarItems, setMostrarItems] = useState(false);
-    const [verItems, setVerItems] = useState('No');
-    const [customStock, setCustomStock] = useState('');
-    const [cantidadStock, setCantidadStock] = useState(''); // Nuevo estado para cantidad de stock manual
-
-    useEffect(() => {
-        cargarCategoriasYSubcategorias();
-    }, []);
-
+    const [precioAnterior, setPrecioAnterior] = useState('');
     const toggleModal = () => {
         setModalOpen(!modalOpen);
     };
-    useEffect(() => {
-        cargarCategoria();
-        cargarSubCategoria();
-    }, []);
-    const cargarCategoria = () => {
-        fetch(`${baseURL}/categoriasGet.php`, {
-            method: 'GET',
-        })
-            .then(response => response.json())
-            .then(data => {
-                setCategoras(data.categorias || []);
-                console.log(data.categorias);
-            })
-            .catch(error => console.error('Error al cargar contactos:', error));
-    };
-    const cargarSubCategoria = () => {
-        fetch(`${baseURL}/subCategoriaGet.php`, {
-            method: 'GET',
-        })
-            .then(response => response.json())
-            .then(data => {
-                setSubCategorias(data.subcategorias || []);
-                console.log(data.subcategorias)
-            })
-            .catch(error => console.error('Error al cargar contactos:', error));
-    };
-    const handleImagenChange = (event, index) => {
+    const handleImagenChange = (event, setImagenPreview, setIsImageSelected) => {
         const file = event.target.files[0];
 
         if (file) {
+
             const previewURL = URL.createObjectURL(file);
-            setImagenPreview(prev => {
-                const newPreviews = [...prev];
-                newPreviews[index] = previewURL;
-                return newPreviews;
-            });
-            setIsImageSelected(prev => {
-                const newSelection = [...prev];
-                newSelection[index] = true;
-                return newSelection;
-            });
+            setImagenPreview(previewURL);
+            setIsImageSelected(true);
         }
     };
-
-    const eliminarImagen = (index) => {
-        setImagenPreview(prev => {
-            const newPreviews = [...prev];
-            newPreviews[index] = null;
-            return newPreviews;
-        });
-        setIsImageSelected(prev => {
-            const newSelection = [...prev];
-            newSelection[index] = false;
-            return newSelection;
-        });
-    };
-    const cargarCategoriasYSubcategorias = async () => {
-        try {
-            const [categoriasRes, subcategoriasRes] = await Promise.all([
-                fetch(`${baseURL}/categoriasGet.php`).then(res => res.json()),
-                fetch(`${baseURL}/subCategoriaGet.php`).then(res => res.json()),
-            ]);
-
-            const categorias = categoriasRes.categorias || [];
-            const subcategorias = subcategoriasRes.subcategorias || [];
-
-            const categoriasConSub = categorias.map(categoria => {
-                return {
-                    ...categoria,
-                    subcategorias: subcategorias.filter(sub => sub.idCategoria === categoria.idCategoria),
-                };
-            });
-
-            setCategoriasConSubcategorias(categoriasConSub);
-        } catch (error) {
-            console.error('Error al cargar categorías y subcategorías:', error);
-        }
-    };
-
-    const handleCategoriaSeleccion = (e) => {
-        const selectedValue = e.target.value;
-
-        // Separar idCategoria de idSubCategoria si está presente
-        const [categoriaId, subCategoriaId] = selectedValue.split('-');
-
-        setIdCategoria(categoriaId);
-
-        if (subCategoriaId) {
-            setIdSubCategoria(subCategoriaId);
-        } else {
-            setIdSubCategoria(''); // No subcategoría seleccionada
-        }
-    };
-
-    const handleStock = (e) => {
-        setStock(e.target.value);
-        if (e.target.value !== 'elegir') {
-            setCustomStock('');
-        }
-    };
-
 
 
     const crear = async () => {
         const form = document.getElementById("crearForm");
         const formData = new FormData(form);
+        const resetForm = () => {
+            form.reset();
+            setImagenPreview1(null);
+            setImagenPreview2(null);
 
-        // Validar que los campos obligatorios estén completos
-        if (!formData.get('titulo') || !idCategoria || !formData.get('precio')) {
-            toast.error('Por favor, complete todos los campos obligatorios.');
+            setIsImage1Selected(false);
+            setIsImage2Selected(false);
+        };
+        setMensaje('');
+
+        if (
+
+            !formData.get('titulo') ||
+            !formData.get('idCategoria') ||
+            !formData.get('masVendido') ||
+            !formData.get('precio') ||
+            !formData.get('imagen1') ||
+            !formData.get('imagen2') ||
+            !formData.get('imagen3') ||
+            !formData.get('imagen4')
+        ) {
+            toast.error('Por favor, complete todos los campos correctamente.');
             return;
         }
 
-        // Añadir idCategoria al FormData
-        formData.append('idCategoria', idCategoria);
-        formData.append('verItems', verItems);
-        // Verificar si se ha seleccionado una subcategoría, de lo contrario, añadir 0
-        if (idSubCategoria) {
-            formData.append('idSubCategoria', idSubCategoria);
-        } else {
-            formData.append('idSubCategoria', '0');
-        }
-
-        formData.append('stock', stock === 'elegir' ? cantidadStock : stock);
+        setMensaje('Procesando...');
 
         try {
             const response = await fetch(`${baseURL}/productosPost.php`, {
@@ -182,152 +85,72 @@ export default function NewProduct() {
             const data = await response.json();
 
             if (data.mensaje) {
+                setMensaje('');
+                resetForm();
                 toast.success(data.mensaje);
                 window.location.reload();
-            } else {
+            } else if (data.error) {
+                setMensaje('');
                 toast.error(data.error);
+                console.log(data.error);
+
             }
         } catch (error) {
-            console.error('Error al crear producto:', error);
-            toast.error('Error de conexión. Inténtelo de nuevo.');
+            console.error('Error:', error);
+            setMensaje('');
+            toast.error('Error de conexión. Por favor, inténtelo de nuevo.');
+
         }
     };
 
 
-
-
-
+    const handleCategoriaChange = (e) => {
+        setCategoria(e.target.value);
+    };
     const handleMasVendidoChange = (e) => {
         setMasVendido(e.target.value);
     };
 
-
-
-    const handleCheckboxChange = (event) => {
-        setVerItems(event.target.checked ? 'Si' : 'No');
-        setMostrarItems(event.target.checked);
-    };
-
-
-    //Trae usuario logueado-----------------------------
-    const [loading, setLoading] = useState(true);
     useEffect(() => {
-        const fetchData = async () => {
-            await fetchUsuario();
-            setLoading(false);
-        };
-
-        fetchData();
-    }, []);
-    const usuarioLegued = getUsuario();
-    const alertPermiso = () => {
-        Swal.fire(
-            '¡Error!',
-            '¡No tienes permisos!',
-            'error'
-        );
-    }
-
-
-    //Calcular limite de Plan-----------------------------
-    const plan = planes[0]?.plan
-    const limitePlan = planes[0]?.limiteProducto
-    const mensagePlan = `¡Alcanzaste el límite del plan ${plan}! <br/>Tu límite son ${limitePlan} productos`
-    const [productos, setProductos] = useState([]);
-    const alertPlan = () => {
-        cargarProductos();
-        Swal.fire(
-            '¡Error!',
-            mensagePlan,
-            'error'
-        );
-    };
-    useEffect(() => {
-        cargarProductos();
+        cargarCategoria();
 
     }, []);
-    const cargarProductos = () => {
-        fetch(`${baseURL}/productosGet.php`, {
+
+
+    const cargarCategoria = () => {
+        fetch(`${baseURL}/categoriasGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
             .then(data => {
-                setProductos(data.productos || []);
-                console.log(data.productos)
+                setCategoras(data.categorias || []);
+                console.log(data.categorias)
             })
-            .catch(error => console.error('Error al cargar productos:', error));
+            .catch(error => console.error('Error al cargar contactos:', error));
     };
-
-
     return (
         <div className='NewContain'>
             <ToastContainer />
-            {loading ? (
-                <></>
-            ) : usuarioLegued?.idUsuario ? (
-                <>
-                    {usuarioLegued?.rol === 'admin' ? (
-                        <>
-                            {
-                                productos?.length < limitePlan ? (
-                                    <button onClick={toggleModal} className='btnSave'>
-                                        <span>+</span> Agregar
-                                    </button>
-
-                                ) : (
-                                    <button onClick={alertPlan} className='btnSave'>
-                                        <span>+</span> Agregar
-                                    </button>
-                                )
-                            }
-                        </>
-                    ) : usuarioLegued?.rol === 'colaborador' ? (
-                        <>
-                            {
-                                productos?.length < limitePlan ? (
-                                    <button onClick={toggleModal} className='btnSave'>
-                                        <span>+</span> Agregar
-                                    </button>
-
-                                ) : (
-                                    <button onClick={alertPlan} className='btnSave'>
-                                        <span>+</span> Agregar
-                                    </button>
-                                )
-                            }
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </>
-            ) : (
-                <>
-                    {
-                        productos?.length < limitePlan ? (
-                            <button onClick={toggleModal} className='btnSave'>
-                                <span>+</span> Agregar
-                            </button>
-
-                        ) : (
-                            <button onClick={alertPlan} className='btnSave'>
-                                <span>+</span> Agregar
-                            </button>
-                        )
-                    }
-                </>
-            )}
+            <button onClick={toggleModal} className='btnSave'>
+                <span>  +</span> Agregar
+            </button>
             {modalOpen && (
                 <div className="modal">
                     <div className="modal-content">
+
                         <div className='deFlexBtnsModal'>
-                            <button className='selected'>Agregar Producto</button>
-                            <span className="close" onClick={toggleModal}>&times;</span>
+                            <button className='selected'>
+                                Agregar Producto
+                            </button>
+                            <span className='close' onClick={toggleModal}>
+                                &times;
+                            </span>
                         </div>
                         <form id="crearForm">
 
                             <div className='flexGrap'>
-                                <fieldset id='titulo'>
-                                    <legend>Título (*)</legend>
+                                <fieldset>
+                                    <legend>Título (obligatorio)</legend>
                                     <input
                                         type="text"
                                         id="titulo"
@@ -337,33 +160,9 @@ export default function NewProduct() {
                                         onChange={(e) => setTitulo(e.target.value)}
                                     />
                                 </fieldset>
-                                <fieldset>
-                                    <legend>Categoría (*)</legend>
-                                    <select
-                                        id="categoriaSeleccionada"
-                                        name="categoriaSeleccionada"
-                                        onChange={handleCategoriaSeleccion}
-                                        required
-                                    >
-                                        <option value="">Categoría / subcategoría</option>
-                                        {categoriasConSubcategorias.map(categoria => (
-                                            <optgroup key={categoria.idCategoria}>
-                                                <option value={`${categoria.idCategoria}`} id='option'>{categoria.categoria}</option>
-                                                {categoria.subcategorias.map(subcategoria => (
-                                                    <option key={subcategoria.idSubCategoria} value={`${categoria.idCategoria}-${subcategoria.idSubCategoria}`}>
-                                                        {categoria.categoria} {`>`} {subcategoria.subcategoria}
-                                                    </option>
-                                                ))}
-                                            </optgroup>
-                                        ))}
-                                    </select>
-                                </fieldset>
-
-
-
 
                                 <fieldset>
-                                    <legend>Precio (*)</legend>
+                                    <legend>Precio (obligatorio)</legend>
                                     <input
                                         type="number"
                                         id="precio"
@@ -375,8 +174,49 @@ export default function NewProduct() {
                                         onChange={(e) => setPrecio(e.target.value)}
                                     />
                                 </fieldset>
+
+
                                 <fieldset>
-                                    <legend>Precio tachado</legend>
+                                    <legend>Categoría (obligatorio)</legend>
+                                    <select
+                                        id="idCategoria"
+                                        name="idCategoria"
+                                        value={categoria}
+                                        onChange={handleCategoriaChange}
+                                    >
+                                        <option value="">Selecciona una categoría</option>
+                                        {categorias.map(item => (
+                                            <option key={item.idCategoria} value={item.idCategoria}>{item.categoria}</option>
+                                        ))}
+                                    </select>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Más vendido (obligatorio)</legend>
+                                    <select
+                                        id="masVendido"
+                                        name="masVendido"
+                                        value={masVendido}
+                                        onChange={handleMasVendidoChange}
+                                    >
+                                        <option value="">Selecciona opcion</option>
+                                        <option value="si">Si</option>
+                                        <option value="no">No</option>
+
+                                    </select>
+                                </fieldset>
+                                <fieldset id='descripcion'>
+                                    <legend>Descripción</legend>
+                                    <textarea
+                                        id="descripcion"
+                                        name="descripcion"
+                                        required
+                                        value={descripcion}
+                                        onChange={(e) => setDescripcion(e.target.value)}
+                                        placeholder="Descripción"
+                                    />
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Precio anterior</legend>
                                     <input
                                         type="number"
                                         id="precioAnterior"
@@ -388,119 +228,190 @@ export default function NewProduct() {
                                         onChange={(e) => setPrecioAnterior(e.target.value)}
                                     />
                                 </fieldset>
+                                <div className='items'>
+                                    <fieldset>
+                                        <legend>Item 1</legend>
+                                        <input
+                                            type="text"
+                                            id="item1"
+                                            name="item1"
+                                            required
+                                            value={item1}
+                                            onChange={(e) => setItem1(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 2</legend>
+                                        <input
+                                            type="text"
+                                            id="item2"
+                                            name="item2"
+                                            required
+                                            value={item2}
+                                            onChange={(e) => setItem2(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 3</legend>
+                                        <input
+                                            type="text"
+                                            id="item3"
+                                            name="item3"
+                                            required
+                                            value={item3}
+                                            onChange={(e) => setItem3(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 4</legend>
+                                        <input
+                                            type="text"
+                                            id="item4"
+                                            name="item4"
+                                            required
+                                            value={item4}
+                                            onChange={(e) => setItem4(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 5</legend>
+                                        <input
+                                            type="text"
+                                            id="item5"
+                                            name="item5"
+                                            required
+                                            value={item5}
+                                            onChange={(e) => setItem5(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 6</legend>
+                                        <input
+                                            type="text"
+                                            id="item6"
+                                            name="item6"
+                                            required
+                                            value={item6}
+                                            onChange={(e) => setItem6(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 7</legend>
+                                        <input
+                                            type="text"
+                                            id="item7"
+                                            name="item7"
+                                            required
+                                            value={item7}
+                                            onChange={(e) => setItem7(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 8</legend>
+                                        <input
+                                            type="text"
+                                            id="item8"
+                                            name="item8"
+                                            required
+                                            value={item8}
+                                            onChange={(e) => setItem8(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 9</legend>
+                                        <input
+                                            type="text"
+                                            id="item9"
+                                            name="item9"
+                                            required
+                                            value={item9}
+                                            onChange={(e) => setItem9(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 10</legend>
+                                        <input
+                                            type="text"
+                                            id="item10"
+                                            name="item10"
+                                            required
+                                            value={item10}
+                                            onChange={(e) => setItem10(e.target.value)}
+                                        />
+                                    </fieldset>
+
+
+
+                                </div>
+
+
+
 
                                 <fieldset>
-                                    <legend>Más vendido (*)</legend>
-                                    <select
-                                        id="masVendido"
-                                        name="masVendido"
-                                        value={masVendido}
-                                        onChange={handleMasVendidoChange}
-                                    >
-                                        <option value="">Selecciona opcion</option>
-                                        <option value="si">Si</option>
-                                        <option value="no">No</option>
-                                    </select>
+                                    <legend>Imagen1</legend>
+                                    <input
+                                        type="file"
+                                        id="imagen1"
+                                        name="imagen1"
+                                        accept="image/*"
+                                        onChange={(e) => handleImagenChange(e, setImagenPreview1, setIsImage1Selected)}
+                                        required
+                                    />
                                 </fieldset>
                                 <fieldset>
-                                    <legend>Stock (*)</legend>
-                                    <select
-                                        id="stock"
-                                        name="stock"
-                                        value={stock}
-                                        onChange={handleStock}
-                                    >
-                                        <option value="">Selecciona opción</option>
-                                        <option value={1}>Disponible</option>
-                                        <option value={0}>Agotado</option>
-                                        <option value="elegir">Ingrese cantidad</option>
-                                    </select>
-                                    {stock === 'elegir' && (
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            placeholder="Ingrese cantidad"
-                                            value={cantidadStock}
-                                            onChange={(e) => setCantidadStock(e.target.value)}
-                                            required
-                                        />
-                                    )}
-                                </fieldset>
-                                <fieldset id='descripcion'>
-                                    <legend>Descripción  </legend>
-                                    <textarea
-                                        id="descripcion"
-                                        name="descripcion"
+                                    <legend>Imagen2</legend>
+                                    <input
+                                        type="file"
+                                        id="imagen2"
+                                        name="imagen2"
+                                        accept="image/*"
+                                        onChange={(e) => handleImagenChange(e, setImagenPreview2, setIsImage2Selected)}
                                         required
-                                        value={descripcion}
-                                        onChange={(e) => setDescripcion(e.target.value)}
-                                        placeholder="Descripción"
                                     />
                                 </fieldset>
 
-                                <div id='textLabel'>
-                                    <label >Ingredientes (opcionales) </label>
-                                    <div id='flexLabel'> Dar a elegir a los clientes
-                                        <input
-                                            type="checkbox"
-                                            id="verItems"
-                                            name="verItems"
-                                            checked={mostrarItems}
-                                            onChange={handleCheckboxChange}
-                                        />
-                                    </div>
-                                </div>
-                                {
-                                    mostrarItems && (
-                                        <div className='items'>
-                                            {[...Array(10)].map((_, index) => (
-                                                <fieldset key={index}>
-                                                    <legend>Ingrediente</legend>
-                                                    <input
-                                                        type="text"
-                                                        id={`item${index + 1}`}
-                                                        name={`item${index + 1}`}
-                                                        required
-                                                        value={eval(`item${index + 1}`)}
-                                                        onChange={(e) => eval(`setItem${index + 1}`)(e.target.value)}
-                                                    />
-                                                </fieldset>
-                                            ))}
-                                        </div>
-                                    )
-                                }
+                                <fieldset>
+                                    <legend>Imagen3</legend>
+                                    <input
+                                        type="file"
+                                        id="imagen3"
+                                        name="imagen3"
+                                        accept="image/*"
+                                        onChange={(e) => handleImagenChange(e, setImagenPreview3, setIsImage3Selected)}
+                                        required
+                                    />
+                                </fieldset>
+                                <fieldset>
+                                    <legend>Imagen4</legend>
 
-                                <label id='textLabel'>Imagenes</label>
-                                {/* Sección de imágenes */}
-                                <div className='image-container'>
-                                    {[...Array(4)].map((_, index) => (
-                                        <div key={index} className='image-input'>
-                                            <input
-                                                type="file"
-                                                id={`imagen${index + 1}`}
-                                                name={`imagen${index + 1}`}
-                                                accept="image/*"
-                                                onChange={(e) => handleImagenChange(e, index)}
-                                                style={{ display: 'none' }} // Ocultar input file
-                                                required
-                                            />
-                                            <label htmlFor={`imagen${index + 1}`} className={`image-label ${isImageSelected[index] ? 'selectedImage' : ''}`}>
-                                                {isImageSelected[index] ? (
-                                                    <img src={imagenPreview[index]} alt={`Vista previa ${index + 1}`} className='preview-image' />
-                                                ) : (
-                                                    <img src={imageIcon} alt="Seleccionar imagen" className='image-icon' />
-                                                )}
-                                            </label>
-                                            {isImageSelected[index] && (
-                                                <button type="button" onClick={() => eliminarImagen(index)} className='eliminar-imagen'>
-                                                    Eliminar
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
+                                    <input
+                                        type="file"
+                                        id="imagen4"
+                                        name="imagen4"
+                                        accept="image/*"
+                                        onChange={(e) => handleImagenChange(e, setImagenPreview4, setIsImage4Selected)}
+                                        required
+                                    />
+                                </fieldset>
 
                             </div>
+                            {(isImage1Selected || isImage2Selected || isImage3Selected || isImage4Selected) &&
+                                <div className='previevCategori'>
+                                    {isImage1Selected && <img src={imagenPreview1} alt="Vista previa 1" />}
+                                    {isImage2Selected && <img src={imagenPreview2} alt="Vista previa 2" />}
+                                    {isImage3Selected && <img src={imagenPreview3} alt="Vista previa 3" />}
+                                    {isImage4Selected && <img src={imagenPreview4} alt="Vista previa 4" />}
+                                </div>
+                            }
                             {mensaje ? (
                                 <button type="button" className='btnLoading' disabled>
                                     {mensaje}
@@ -510,10 +421,14 @@ export default function NewProduct() {
                                     Agregar
                                 </button>
                             )}
+
+
                         </form>
                     </div>
                 </div>
             )}
+
         </div>
     );
 }
+

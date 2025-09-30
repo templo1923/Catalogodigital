@@ -24,43 +24,17 @@ gap: 2rem;
     overflow: auto;
    
 }
-.spanBanner{
-    position: absolute;
-    top: 0;
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-    background-color: var(--blanco);
-    left: 8%;
-    padding: 5px 10px;
-    font-size: 0.8em;
-    border-radius: 2px;
-}
-.btnsBanner{
-    position: absolute;
-    top: 0;
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-    left: 70%;
-}
 .btnBannerDelete{
+    position: absolute;
     background-color: var(--blanco);
     color: var(--color1);
     border: none;
+    margin-top: 10px;
+    margin-left: -30px;
     font-size: 16px;
     padding: 4px;
     border-radius: 2px;
     
-}
-.btnBannerEdit{
-    background-color: var(--blanco);
-    color: var(--color2);
-    border: none;
-    font-size: 16px;
-    padding: 4px;
-    border-radius: 2px;
-
 }
 
 .BannerWrap::-webkit-scrollbar{
@@ -93,14 +67,5 @@ gap: 2rem;
         overflow: auto;
         justify-content: space-between;
        
-    }
-    .spanBanner{
-        left: 5%;
-        padding: 5px 8px;
-        font-size: 0.7em;
-    }
-    .btnsBanner{
-        
-        left: 60%;
     }
   }

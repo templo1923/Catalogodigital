@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
 import { useNavigate, } from 'react-router';
 import baseURL from '../../url';
-import logo from '../../../images/logo.png'
-import { Link as Anchor } from 'react-router-dom';
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -56,10 +54,6 @@ export default function Login() {
     return (
         <div className='formContain'>
             <ToastContainer />
-            <Anchor to={`/`} >
-                {/* <img src={logo} alt="" /> */}
-                <FontAwesomeIcon icon={faUser} className='logoAtuh' />
-            </Anchor>
             <h2>Administrador</h2>
             <form onSubmit={handleLogin} className='formAuth'>
                 <div className='inputsAuth'>

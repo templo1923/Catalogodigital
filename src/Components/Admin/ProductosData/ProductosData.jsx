@@ -12,8 +12,6 @@ import baseURL from '../../url';
 import NewProduct from '../NewProduct/NewProduct';
 import moneda from '../../moneda';
 import { Link as Anchor } from "react-router-dom";
-import imageIcon from '../../../images/imageIcon.png';
-import { fetchUsuario, getUsuario } from '../../user';
 export default function ProductosData() {
     const [productos, setProductos] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -21,13 +19,13 @@ export default function ProductosData() {
     const [nuevaDescripcion, setNuevaDescripcion] = useState('');
     const [nuevoPrecio, setNuevoPrecio] = useState('');
     const [nuevoPrecioAnterior, setNuevoPrecioAnterior] = useState(0);
+    const [nuevaCategoria, setNuevaCategoria] = useState('');
     const [producto, setProducto] = useState({});
     const [modalImagenVisible, setModalImagenVisible] = useState(false);
     const [imagenSeleccionada, setImagenSeleccionada] = useState('');
     const [filtroId, setFiltroId] = useState('');
     const [filtroTitulo, setFiltroTitulo] = useState('');
     const [filtroCategoria, setFiltroCategoria] = useState('');
-    const [filtroCategoria2, setFiltroCategoria2] = useState('');
     const [filtroMasVendido, setFiltroMasVendido] = useState('');
     const [ordenInvertido, setOrdenInvertido] = useState(false);
     const [imagenPreview, setImagenPreview] = useState(null);
@@ -51,59 +49,7 @@ export default function ProductosData() {
     const [item8, setItem8] = useState('');
     const [item9, setItem9] = useState('');
     const [item10, setItem10] = useState('');
-    const [nuevoStock, setNuevoStock] = useState('');
-    const [subcategorias, setSubCategorias] = useState([]);
-    const [visibleCount, setVisibleCount] = useState(20);
-    const [categoriasConSubcategorias, setCategoriasConSubcategorias] = useState([]);
-    const [idCategoria, setIdCategoria] = useState('');
-    const [idSubCategoria, setIdSubCategoria] = useState('');
-    const [mostrarItems, setMostrarItems] = useState(false);
-    const [cantidadStock, setCantidadStock] = useState('');
-    const [verItems, setVerItems] = useState('No');
-    const handleShowMore = () => {
-        setVisibleCount(prevCount => prevCount + 20);
-    };
 
-    useEffect(() => {
-        cargarCategoriasYSubcategorias();
-    }, []);
-    const cargarCategoriasYSubcategorias = async () => {
-        try {
-            const [categoriasRes, subcategoriasRes] = await Promise.all([
-                fetch(`${baseURL}/categoriasGet.php`).then(res => res.json()),
-                fetch(`${baseURL}/subCategoriaGet.php`).then(res => res.json()),
-            ]);
-
-            const categorias = categoriasRes.categorias || [];
-            const subcategorias = subcategoriasRes.subcategorias || [];
-
-            const categoriasConSub = categorias.map(categoria => {
-                return {
-                    ...categoria,
-                    subcategorias: subcategorias.filter(sub => sub.idCategoria === categoria.idCategoria),
-                };
-            });
-
-            setCategoriasConSubcategorias(categoriasConSub);
-        } catch (error) {
-            console.error('Error al cargar categorías y subcategorías:', error);
-        }
-    };
-
-    const handleCategoriaSeleccion = (e) => {
-        const selectedValue = e.target.value;
-
-        // Separar idCategoria de idSubCategoria si está presente
-        const [categoriaId, subCategoriaId] = selectedValue.split('-');
-
-        setIdCategoria(categoriaId);
-
-        if (subCategoriaId) {
-            setIdSubCategoria(subCategoriaId);
-        } else {
-            setIdSubCategoria(''); // No subcategoría seleccionada
-        }
-    };
     const cerrarModalImagen = () => {
         setModalImagenVisible(false);
     };
@@ -124,8 +70,7 @@ export default function ProductosData() {
         setNuevaDescripcion(producto.descripcion);
         setNuevoPrecio(producto.precio);
         setNuevoMasVendido(producto.masVendido)
-        setIdCategoria(producto.idCategoria)
-        setIdSubCategoria(producto.idSubCategoria)
+        setNuevaCategoria(producto.idCategoria)
         setItem1(producto.item1);
         setItem2(producto.item2);
         setItem3(producto.item3);
@@ -137,8 +82,6 @@ export default function ProductosData() {
         setItem9(producto.item9);
         setItem10(producto.item10);
         setNuevoPrecioAnterior(producto.precioAnterior)
-        setNuevoStock(producto.stock)
-        setVerItems(producto.verItems)
     }, [producto]);
 
     const cargarProductos = () => {
@@ -176,7 +119,6 @@ export default function ProductosData() {
                             data.mensaje,
                             'success'
                         );
-                        window.location.reload();
                         cargarProductos();
                     })
                     .catch(error => {
@@ -197,16 +139,15 @@ export default function ProductosData() {
 
     const cerrarModal = () => {
         setModalVisible(false);
-        setMostrarItems(false)
     };
 
     const productosFiltrados = productos.filter(item => {
         const idMatch = item.idProducto.toString().includes(filtroId);
-        const tituloMatch = !filtroTitulo || item.titulo.toLowerCase().includes(filtroTitulo.toLowerCase());
+        const tituloMatch = !filtroTitulo || item.titulo.includes(filtroTitulo);
         const categoriaMatch = item.idCategoria.toString().includes(filtroCategoria);
         const masVendidoMatch = !filtroMasVendido || item.masVendido.includes(filtroMasVendido);
-        const categoriasMatch = !filtroCategoria2 || item.categoria.includes(filtroCategoria2);
-        return idMatch && tituloMatch && categoriaMatch && masVendidoMatch && categoriasMatch;
+
+        return idMatch && tituloMatch && categoriaMatch && masVendidoMatch;
     });
 
     const descargarExcel = () => {
@@ -270,14 +211,13 @@ export default function ProductosData() {
     };
 
 
-    const handleUpdateText = async (idProducto) => {
+    const handleUpdateText = (idProducto) => {
         const payload = {
 
             nuevoTitulo: nuevoTitulo !== '' ? nuevoTitulo : producto.titulo,
             nuevaDescripcion: nuevaDescripcion !== undefined ? nuevaDescripcion : producto.descripcion,
             nuevoPrecio: nuevoPrecio !== '' ? nuevoPrecio : producto.precio,
-            nuevaCategoria: idCategoria !== '' ? idCategoria : producto.idCategoria,
-            nuevaSubCategoria: idSubCategoria !== 0 ? idSubCategoria : producto.idSubCategoria,
+            nuevaCategoria: nuevaCategoria !== '' ? nuevaCategoria : producto.categoria,
             masVendido: nuevoMasVendido !== '' ? nuevoMasVendido : producto.masVendido,
             item1: item1 !== undefined ? item1 : producto.item1,
             item2: item2 !== undefined ? item2 : producto.item2,
@@ -290,8 +230,6 @@ export default function ProductosData() {
             item9: item9 !== undefined ? item9 : producto.item9,
             item10: item10 !== undefined ? item10 : producto.item10,
             precioAnterior: nuevoPrecioAnterior !== 0 ? nuevoPrecioAnterior : producto.precioAnterior,
-            stock: nuevoStock === 'elegir' ? cantidadStock : nuevoStock !== '' ? nuevoStock : producto.stock,
-            verItems: verItems !== '' ? verItems : producto.verItems,
         };
 
         fetch(`${baseURL}/productoTextPut.php?idProducto=${idProducto}`, {
@@ -337,7 +275,7 @@ export default function ProductosData() {
             setPreview(previewURL);
         }
     };
-    const handleEditarImagenBanner = async (idProducto) => {
+    const handleEditarImagenBanner = (idProducto) => {
         const formData = new FormData();
         formData.append('idProducto', idProducto);
         formData.append('updateAction', 'update'); // Campo adicional para indicar que es una actualización
@@ -393,7 +331,7 @@ export default function ProductosData() {
 
     useEffect(() => {
         cargarCategoria();
-        cargarSubCategoria();
+
     }, []);
 
 
@@ -408,49 +346,6 @@ export default function ProductosData() {
             })
             .catch(error => console.error('Error al cargar contactos:', error));
     };
-    const cargarSubCategoria = () => {
-        fetch(`${baseURL}/subCategoriaGet.php`, {
-            method: 'GET',
-        })
-            .then(response => response.json())
-            .then(data => {
-                setSubCategorias(data.subcategorias || []);
-                console.log(data.subcategorias)
-            })
-            .catch(error => console.error('Error al cargar contactos:', error));
-    };
-    const handleCheckboxChange = (event) => {
-        const isChecked = event.target.checked;
-        setVerItems(isChecked ? 'Si' : 'No');
-        setMostrarItems(isChecked);
-    };
-    async function guardarCambios(idProducto) {
-        try {
-            await handleEditarImagenBanner(idProducto);
-            await handleUpdateText(idProducto);
-        } catch (error) {
-            console.error('Error al guardar los cambios:', error);
-            toast.error('Error al guardar los cambios');
-        }
-    }
-    //Trae usuario logueado-----------------------------
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        const fetchData = async () => {
-            await fetchUsuario();
-            setLoading(false);
-        };
-
-        fetchData();
-    }, []);
-    const usuarioLegued = getUsuario();
-    const alertPermiso = () => {
-        Swal.fire(
-            '¡Error!',
-            '¡No tienes permisos!',
-            'error'
-        );
-    }
     return (
         <div>
 
@@ -463,9 +358,6 @@ export default function ProductosData() {
                     <button className='pdf' onClick={descargarPDF}><FontAwesomeIcon icon={faArrowDown} /> PDF</button>
                 </div>
                 <div className='filtrosContain'>
-                    <div className='inputsColumn'>
-                        <button  >{String(productosFiltrados?.length)?.replace(/\B(?=(\d{3})+(?!\d))/g, ".")} / {String(productos?.length)?.replace(/\B(?=(\d{3})+(?!\d))/g, ".")} </button>
-                    </div>
                     <div className='inputsColumn'>
                         <input type="number" value={filtroId} onChange={(e) => setFiltroId(e.target.value)} placeholder='Id Producto' />
                     </div>
@@ -484,7 +376,6 @@ export default function ProductosData() {
                             }
                         </select>
                     </div>
-
                     <div className='inputsColumn'>
                         <select value={filtroMasVendido} onChange={(e) => setFiltroMasVendido(e.target.value)}>
                             <option value="">Más vendidos</option>
@@ -530,6 +421,12 @@ export default function ProductosData() {
                                 >
                                     Editar Texto
                                 </button>
+                                <button
+                                    className={selectedSection === 'imagenes' ? 'selected' : ''}
+                                    onClick={() => handleSectionChange('imagenes')}
+                                >
+                                    Editar Imagenes
+                                </button>
                             </div>
                             <span className="close" onClick={cerrarModal}>
                                 &times;
@@ -537,72 +434,57 @@ export default function ProductosData() {
                         </div>
                         <div className='sectiontext' style={{ display: selectedSection === 'texto' ? 'flex' : 'none' }}>
                             <div className='flexGrap'>
-                                <fieldset id='titulo'>
-                                    <legend>Titulo (*)</legend>
+                                <fieldset>
+                                    <legend>Titulo</legend>
                                     <input
                                         type="text"
-                                        value={nuevoTitulo}
+                                        value={nuevoTitulo !== '' ? nuevoTitulo : producto.titulo}
                                         onChange={(e) => setNuevoTitulo(e.target.value)}
                                     />
                                 </fieldset>
                                 <fieldset>
-                                    <legend>Categoría (*)</legend>
+                                    <legend>Precio</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoPrecio !== '' ? nuevoPrecio : producto.precio}
+                                        onChange={(e) => setNuevoPrecio(e.target.value)}
+                                    />
+                                </fieldset>
+                                <fieldset id='descripcion'>
+                                    <legend>Descripcion</legend>
+                                    <textarea
+                                        type="text"
+                                        value={nuevaDescripcion}
+                                        onChange={(e) => setNuevaDescripcion(e.target.value)}
+                                    />
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Categoria</legend>
                                     <select
-                                        id="categoriaSeleccionada"
-                                        name="categoriaSeleccionada"
-                                        onChange={handleCategoriaSeleccion}
-                                        required
+                                        value={nuevaCategoria !== '' ? nuevaCategoria : producto.categoria}
+                                        onChange={(e) => setNuevaCategoria(e.target.value)}
                                     >
+
                                         {
                                             categorias
-                                                ?.filter(categoriaFiltrada => categoriaFiltrada?.idCategoria === producto?.idCategoria)
-                                                ?.map(categoriaFiltrada => (
+                                                .filter(categoriaFiltrada => categoriaFiltrada.idCategoria === producto.idCategoria)
+                                                .map(categoriaFiltrada => (
 
-                                                    <option value={producto?.categoria}>{categoriaFiltrada?.categoria}
-                                                        {subcategorias
-                                                            ?.filter(subcategoriaFiltrada => subcategoriaFiltrada.idSubCategoria === producto.idSubCategoria)
-                                                            ?.map(subcategoriaFiltrada => (
-                                                                <>
-                                                                    {` >`} {subcategoriaFiltrada?.subcategoria}
-                                                                </>
-                                                            ))
-                                                        }
-
-                                                    </option>
+                                                    <option value={producto.categoria}> {categoriaFiltrada.categoria}</option>
                                                 ))
                                         }
-                                        {categoriasConSubcategorias.map(categoria => (
-                                            <optgroup key={categoria.idCategoria}>
-                                                <option value={`${categoria.idCategoria}`} id='option'>{categoria.categoria}</option>
-                                                {categoria.subcategorias.map(subcategoria => (
-                                                    <option key={subcategoria.idSubCategoria} value={`${categoria.idCategoria}-${subcategoria.idSubCategoria}`}>
-                                                        {categoria.categoria} {`>`} {subcategoria.subcategoria}
-                                                    </option>
-                                                ))}
-                                            </optgroup>
-                                        ))}
+
+                                        {
+                                            categorias.map(item => (
+                                                <option value={item?.idCategoria}>{item?.categoria}</option>
+                                            ))
+                                        }
                                     </select>
                                 </fieldset>
 
                                 <fieldset>
-                                    <legend>Precio (*)</legend>
-                                    <input
-                                        type="number"
-                                        value={nuevoPrecio}
-                                        onChange={(e) => setNuevoPrecio(e.target.value)}
-                                    />
-                                </fieldset>
-                                <fieldset>
-                                    <legend>Precio anterior </legend>
-                                    <input
-                                        type="number"
-                                        value={nuevoPrecioAnterior}
-                                        onChange={(e) => setNuevoPrecioAnterior(e.target.value)}
-                                    />
-                                </fieldset>
-
-                                <fieldset>
-                                    <legend>Más vendido (*)</legend>
+                                    <legend>Más vendido</legend>
                                     <select
                                         value={nuevoMasVendido !== '' ? nuevoMasVendido : producto.masVendido}
                                         onChange={(e) => setNuevoMasVendido(e.target.value)}
@@ -612,185 +494,148 @@ export default function ProductosData() {
                                         <option value="no">No</option>
                                     </select>
                                 </fieldset>
-                                <fieldset>
-                                    <legend>Stock (*)</legend>
-                                    <select
-                                        value={nuevoStock}
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            setNuevoStock(value);
-                                            if (value === 'elegir') {
-                                                setCantidadStock(producto.stock); // Asigna el stock actual al campo cantidadStock
-                                            }
-                                        }}
-                                    >
-                                        <option value="">Selecciona opcion</option>
-                                        <option value={1}>Disponible</option>
-                                        <option value={0}>Agotado</option>
-                                        <option value="elegir">Ingrese cantidad</option>
-                                    </select>
-                                    {nuevoStock === 'elegir' && (
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            placeholder="Ingrese cantidad"
-                                            value={cantidadStock} // Muestra el valor inicial del stock o el nuevo valor ingresado
-                                            onChange={(e) => setCantidadStock(e.target.value)}
-                                            required
-                                        />
-                                    )}
-                                </fieldset>
 
-                                <fieldset id='descripcion'>
-                                    <legend>Descripcion </legend>
-                                    <textarea
-                                        type="text"
-                                        value={nuevaDescripcion}
-                                        onChange={(e) => setNuevaDescripcion(e.target.value)}
+                                <fieldset>
+                                    <legend>Precio anterior</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoPrecioAnterior !== '' ? nuevoPrecioAnterior : producto.precioAnterior}
+                                        onChange={(e) => setNuevoPrecioAnterior(e.target.value)}
                                     />
                                 </fieldset>
-                                <div id='textLabel'>
-                                    <label>Ingredientes (opcionales)</label>
-                                    <div id='flexLabel'>
-                                        Dar a elegir a los clientes
+                                <div className='items'>
+                                    <fieldset>
+                                        <legend>Item 1</legend>
                                         <input
-                                            type="checkbox"
-                                            value={verItems}
-                                            checked={verItems === "Si"}
-                                            onChange={handleCheckboxChange}
+                                            type="text"
+                                            id="item1"
+                                            name="item1"
+                                            required
+                                            value={item1}
+                                            onChange={(e) => setItem1(e.target.value)}
                                         />
-                                    </div>
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 2</legend>
+                                        <input
+                                            type="text"
+                                            id="item2"
+                                            name="item2"
+                                            required
+                                            value={item2}
+                                            onChange={(e) => setItem2(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 3</legend>
+                                        <input
+                                            type="text"
+                                            id="item3"
+                                            name="item3"
+                                            required
+                                            value={item3}
+                                            onChange={(e) => setItem3(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 4</legend>
+                                        <input
+                                            type="text"
+                                            id="item4"
+                                            name="item4"
+                                            required
+                                            value={item4}
+                                            onChange={(e) => setItem4(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 5</legend>
+                                        <input
+                                            type="text"
+                                            id="item5"
+                                            name="item5"
+                                            required
+                                            value={item5}
+                                            onChange={(e) => setItem5(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 6</legend>
+                                        <input
+                                            type="text"
+                                            id="item6"
+                                            name="item6"
+                                            required
+                                            value={item6}
+                                            onChange={(e) => setItem6(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 7</legend>
+                                        <input
+                                            type="text"
+                                            id="item7"
+                                            name="item7"
+                                            required
+                                            value={item7}
+                                            onChange={(e) => setItem7(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 8</legend>
+                                        <input
+                                            type="text"
+                                            id="item8"
+                                            name="item8"
+                                            required
+                                            value={item8}
+                                            onChange={(e) => setItem8(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 9</legend>
+                                        <input
+                                            type="text"
+                                            id="item9"
+                                            name="item9"
+                                            required
+                                            value={item9}
+                                            onChange={(e) => setItem9(e.target.value)}
+                                        />
+                                    </fieldset>
+
+                                    <fieldset>
+                                        <legend>Item 10</legend>
+                                        <input
+                                            type="text"
+                                            id="item10"
+                                            name="item10"
+                                            required
+                                            value={item10}
+                                            onChange={(e) => setItem10(e.target.value)}
+                                        />
+                                    </fieldset>
+
+
                                 </div>
-
-
-                                {verItems === 'Si' && (
-                                    <div className='items'>
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item1"
-                                                name="item1"
-                                                required
-                                                value={item1}
-                                                onChange={(e) => setItem1(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item2"
-                                                name="item2"
-                                                required
-                                                value={item2}
-                                                onChange={(e) => setItem2(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item3"
-                                                name="item3"
-                                                required
-                                                value={item3}
-                                                onChange={(e) => setItem3(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item4"
-                                                name="item4"
-                                                required
-                                                value={item4}
-                                                onChange={(e) => setItem4(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item5"
-                                                name="item5"
-                                                required
-                                                value={item5}
-                                                onChange={(e) => setItem5(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item6"
-                                                name="item6"
-                                                required
-                                                value={item6}
-                                                onChange={(e) => setItem6(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item7"
-                                                name="item7"
-                                                required
-                                                value={item7}
-                                                onChange={(e) => setItem7(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item8"
-                                                name="item8"
-                                                required
-                                                value={item8}
-                                                onChange={(e) => setItem8(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item9"
-                                                name="item9"
-                                                required
-                                                value={item9}
-                                                onChange={(e) => setItem9(e.target.value)}
-                                            />
-                                        </fieldset>
-
-                                        <fieldset>
-                                            <legend>Ingrediente</legend>
-                                            <input
-                                                type="text"
-                                                id="item10"
-                                                name="item10"
-                                                required
-                                                value={item10}
-                                                onChange={(e) => setItem10(e.target.value)}
-                                            />
-                                        </fieldset>
-
-
-                                    </div>
-                                )}
-
                             </div>
-                            <label id='textLabel'>Imagenes</label>
+
+
+
+
+                            <button className='btnPost' onClick={() => handleUpdateText(producto.idProducto)} >Guardar </button>
+
+                        </div>
+
+                        <div className='sectionImg' style={{ display: selectedSection === 'imagenes' ? 'flex' : 'none' }}>
                             <div className='previevProduct'>
 
                                 {imagenPreview ? (
@@ -855,79 +700,23 @@ export default function ProductosData() {
                                     </>
                                 )}
                             </div>
+                            <fieldset>
+                                <legend>Editar Imagen1 </legend>
+                                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setNuevaImagen, setImagenPreview)} />
+                            </fieldset>
+                            <fieldset>
+                                <legend>Editar Imagen2 </legend>
+                                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setNuevaImagen2, setImagenPreview2)} />
+                            </fieldset>
+                            <fieldset>
+                                <legend>Editar Imagen3 </legend>
+                                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setNuevaImagen3, setImagenPreview3)} />
+                            </fieldset>
+                            <fieldset>
+                                <legend>Editar Imagen4 </legend>
+                                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setNuevaImagen4, setImagenPreview4)} />
+                            </fieldset>
 
-                            <div className='image-container'>
-                                <div className='image-input'>
-                                    <img
-                                        src={imageIcon}
-                                        alt="Imagen de ejemplo"
-                                        className='image-icon'
-                                        onClick={() => document.getElementById('fileInput1').click()} // Al hacer clic, simula un clic en el input
-                                    />
-                                    <input
-                                        id="fileInput1"
-                                        type="file"
-                                        accept="image/*"
-                                        style={{ display: 'none' }} // Oculta el input
-                                        onChange={(e) => handleFileChange(e, setNuevaImagen, setImagenPreview)}
-                                    />
-                                </div>
-
-                                <div className='image-input'>
-                                    <img
-                                        src={imageIcon}
-                                        alt="Imagen de ejemplo"
-                                        className='image-icon'
-                                        onClick={() => document.getElementById('fileInput2').click()}
-                                    />
-                                    <input
-                                        id="fileInput2"
-                                        type="file"
-                                        accept="image/*"
-                                        style={{ display: 'none' }}
-                                        onChange={(e) => handleFileChange(e, setNuevaImagen2, setImagenPreview2)}
-                                    />
-                                </div>
-
-                                <div className='image-input'>
-                                    <img
-                                        src={imageIcon}
-                                        alt="Imagen de ejemplo"
-                                        className='image-icon'
-                                        onClick={() => document.getElementById('fileInput3').click()}
-                                    />
-                                    <input
-                                        id="fileInput3"
-                                        type="file"
-                                        accept="image/*"
-                                        style={{ display: 'none' }}
-                                        onChange={(e) => handleFileChange(e, setNuevaImagen3, setImagenPreview3)}
-                                    />
-                                </div>
-
-                                <div className='image-input'>
-                                    <img
-                                        src={imageIcon}
-                                        alt="Imagen de ejemplo"
-                                        className='image-icon'
-                                        onClick={() => document.getElementById('fileInput4').click()}
-
-                                    />
-                                    <input
-                                        id="fileInput4"
-                                        type="file"
-                                        accept="image/*"
-                                        style={{ display: 'none' }}
-                                        onChange={(e) => handleFileChange(e, setNuevaImagen4, setImagenPreview4)}
-                                    />
-                                </div>
-
-                            </div>
-                            <button className='btnPost' onClick={() => guardarCambios(producto.idProducto)} >Guardar </button>
-
-                        </div>
-
-                        <div className='sectionImg' style={{ display: selectedSection === 'imagenes' ? 'flex' : 'none' }}>
 
                             <button className='btnPost' onClick={() => handleEditarImagenBanner(producto.idProducto)}>Guardar </button>
 
@@ -942,19 +731,40 @@ export default function ProductosData() {
                 <table className='table'>
                     <thead>
                         <tr>
-                            <th>Imagen</th>
+                            <th>Id Producto</th>
                             <th>Titulo</th>
                             <th>Precio</th>
                             <th>Categoria</th>
-                            <th>Subcategoria</th>
-                            <th>Stock</th>
-                            <th>Más vendido</th>
+                            <th>Imagen</th>
+                            <th>Imagen 2</th>
+                            <th>Imagen 3</th>
+                            <th>Imagen 4</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {productosFiltrados?.slice(0, visibleCount)?.map(item => (
+                        {productosFiltrados.map(item => (
                             <tr key={item.idProducto}>
+                                <td>{item.idProducto}</td>
+                                <td>{item.titulo}</td>
+
+                                <td style={{
+                                    color: '#008000',
+                                }}>
+                                    {moneda} {`${item?.precio}`}
+                                </td>
+
+                                {categorias
+                                    .filter(categoriaFiltrada => categoriaFiltrada.idCategoria === item.idCategoria)
+                                    .map(categoriaFiltrada => (
+                                        <td
+                                            key={categoriaFiltrada.idCategoria}
+                                            style={{ color: '#DAA520' }}
+                                        >
+                                            {categoriaFiltrada.categoria}
+                                        </td>
+                                    ))
+                                }
 
                                 <td>
                                     {item.imagen1 ? (
@@ -965,107 +775,45 @@ export default function ProductosData() {
                                         </span>
                                     )}
                                 </td>
-                                <td>{item.titulo}</td>
-
-                                <td style={{
-                                    color: '#008000',
-                                }}>
-                                    {moneda} {`${item?.precio}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                                </td>
-
-                                {categorias
-                                    ?.filter(categoriaFiltrada => categoriaFiltrada.idCategoria === item.idCategoria)
-                                    ?.map(categoriaFiltrada => (
-                                        <td
-                                            key={categoriaFiltrada.idCategoria}
-                                            style={{ color: '#DAA520' }}
-                                        >
-                                            {categoriaFiltrada.categoria}
-                                        </td>
-                                    ))
-                                }
                                 <td>
-                                    {item.idSubCategoria === 0
-                                        ? 'sin seleccionar'
-                                        :
-                                        <>
-                                            {subcategorias
-                                                ?.filter(subcategoriaFiltrada => subcategoriaFiltrada.idSubCategoria === item.idSubCategoria)
-                                                ?.map(subcategoriaFiltrada => (
-                                                    <>
-                                                        {subcategoriaFiltrada?.subcategoria}
-                                                    </>
-                                                ))
-                                            }
-                                        </>
-                                    }
-                                </td>
-
-
-                                {item.stock === 1 ? (
-                                    <td style={{ color: '#008000' }}>Disponible</td>
-                                ) : item.stock <= 0 ? (
-                                    <td style={{ color: 'red' }}>Agotado</td>
-                                ) : (
-
-                                    <td>{item.stock}</td>
-                                )}
-                                {item.masVendido === 'si' ? (
-                                    <td style={{ color: '#008000' }}>Si</td>
-                                ) : item.masVendido === 'no' ? (
-                                    <td style={{ color: 'red' }}>No</td>
-                                ) : (
-                                    <td></td>
-                                )}
-
-
-                                <td>
-                                    {loading ? (
-                                        <></>
-                                    ) : usuarioLegued?.idUsuario ? (
-                                        <>
-                                            {usuarioLegued?.rol === 'admin' ? (
-                                                <>
-                                                    <button className='eliminar' onClick={() => eliminarProducto(item.idProducto)}>
-                                                        <FontAwesomeIcon icon={faTrash} />
-                                                    </button>
-                                                    <button className='editar' onClick={() => abrirModal(item)}>
-                                                        <FontAwesomeIcon icon={faEdit} />
-                                                    </button>
-                                                    <Anchor className='editar' to={`/producto/${item?.idProducto}/${item?.titulo?.replace(/\s+/g, '-')}`}>
-                                                        <FontAwesomeIcon icon={faEye} />
-                                                    </Anchor>
-                                                </>
-                                            ) : usuarioLegued?.rol === 'colaborador' ? (
-                                                <>
-                                                    <button className='eliminar' onClick={() => eliminarProducto(item.idProducto)}>
-                                                        <FontAwesomeIcon icon={faTrash} />
-                                                    </button>
-                                                    <button className='editar' onClick={() => abrirModal(item)}>
-                                                        <FontAwesomeIcon icon={faEdit} />
-                                                    </button>
-                                                    <Anchor className='editar' to={`/producto/${item?.idProducto}/${item?.titulo?.replace(/\s+/g, '-')}`}>
-                                                        <FontAwesomeIcon icon={faEye} />
-                                                    </Anchor>
-                                                </>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </>
+                                    {item.imagen2 ? (
+                                        <img src={item.imagen2} alt="imagen2" />
                                     ) : (
-                                        <>
-                                            <button className='eliminar' onClick={() => eliminarProducto(item.idProducto)}>
-                                                <FontAwesomeIcon icon={faTrash} />
-                                            </button>
-                                            <button className='editar' onClick={() => abrirModal(item)}>
-                                                <FontAwesomeIcon icon={faEdit} />
-                                            </button>
-                                            <Anchor className='editar' to={`/producto/${item?.idProducto}/${item?.titulo?.replace(/\s+/g, '-')}`}>
-                                                <FontAwesomeIcon icon={faEye} />
-                                            </Anchor>
-                                        </>
+                                        <span className='imgNonetd'>
+                                            Sin imagen
+                                        </span>
                                     )}
+                                </td>
+                                <td>
+                                    {item.imagen3 ? (
+                                        <img src={item.imagen3} alt="imagen3" />
+                                    ) : (
+                                        <span className='imgNonetd'>
+                                            Sin imagen
+                                        </span>
+                                    )}
+                                </td>
+                                <td>
+                                    {item.imagen4 ? (
+                                        <img src={item.imagen4} alt="imagen4" />
+                                    ) : (
+                                        <span className='imgNonetd'>
+                                            Sin imagen
+                                        </span>
+                                    )}
+                                </td>
 
+                                <td>
+
+                                    <button className='eliminar' onClick={() => eliminarProducto(item.idProducto)}>
+                                        <FontAwesomeIcon icon={faTrash} />
+                                    </button>
+                                    <button className='editar' onClick={() => abrirModal(item)}>
+                                        <FontAwesomeIcon icon={faEdit} />
+                                    </button>
+                                    <Anchor className='editar' to={`/producto/${item?.idProducto}/${item?.titulo?.replace(/\s+/g, '-')}`}>
+                                        <FontAwesomeIcon icon={faEye} />
+                                    </Anchor>
                                 </td>
                             </tr>
                         ))}
@@ -1073,10 +821,6 @@ export default function ProductosData() {
 
                 </table>
             </div>
-            {productosFiltrados?.length > visibleCount && (
-                <button onClick={handleShowMore} id="show-more-btn">
-                    Mostrar  más </button>
-            )}
         </div>
     );
 };
